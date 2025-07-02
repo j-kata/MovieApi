@@ -11,8 +11,8 @@ using MovieApi.Data;
 namespace MovieApi.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20250702110901_CreateMovieDetails")]
-    partial class CreateMovieDetails
+    [Migration("20250702154232_CreateActors")]
+    partial class CreateActors
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace MovieApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actor");
+                    b.ToTable("Actors");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Genre", b =>
@@ -97,37 +97,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Movie");
-                });
-
-            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Budget")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Synopsis")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId")
-                        .IsUnique();
-
-                    b.ToTable("MovieDetails");
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Review", b =>
@@ -159,7 +129,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("Review");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ActorMovie", b =>
@@ -188,17 +158,6 @@ namespace MovieApi.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
-                {
-                    b.HasOne("MovieApi.Models.Entities.Movie", "Movie")
-                        .WithOne("MovieDetails")
-                        .HasForeignKey("MovieApi.Models.Entities.MovieDetails", "MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-                });
-
             modelBuilder.Entity("MovieApi.Models.Entities.Review", b =>
                 {
                     b.HasOne("MovieApi.Models.Entities.Movie", "Movie")
@@ -217,9 +176,6 @@ namespace MovieApi.Migrations
 
             modelBuilder.Entity("MovieApi.Models.Entities.Movie", b =>
                 {
-                    b.Navigation("MovieDetails")
-                        .IsRequired();
-
                     b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618

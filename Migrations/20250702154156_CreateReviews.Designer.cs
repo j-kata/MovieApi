@@ -11,48 +11,14 @@ using MovieApi.Data;
 namespace MovieApi.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20250702110522_CreateActors")]
-    partial class CreateActor
+    [Migration("20250702154156_CreateReviews")]
+    partial class CreateReviews
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
-
-            modelBuilder.Entity("ActorMovie", b =>
-                {
-                    b.Property<int>("ActorsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MoviesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ActorsId", "MoviesId");
-
-                    b.HasIndex("MoviesId");
-
-                    b.ToTable("MovieActor", (string)null);
-                });
-
-            modelBuilder.Entity("MovieApi.Models.Entities.Actor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("BirthYear")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Actor");
-                });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Genre", b =>
                 {
@@ -97,7 +63,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Movie");
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Review", b =>
@@ -129,22 +95,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("Review");
-                });
-
-            modelBuilder.Entity("ActorMovie", b =>
-                {
-                    b.HasOne("MovieApi.Models.Entities.Actor", null)
-                        .WithMany()
-                        .HasForeignKey("ActorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieApi.Models.Entities.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MoviesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Movie", b =>

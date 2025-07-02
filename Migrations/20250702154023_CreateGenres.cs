@@ -5,7 +5,7 @@
 namespace MovieApi.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateGenre : Migration
+    public partial class CreateGenres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -48,7 +48,7 @@ namespace MovieApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actor");
+                    b.ToTable("Actors");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Genre", b =>
@@ -94,7 +94,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Movie");
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
@@ -156,7 +156,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("Review");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ActorMovie", b =>

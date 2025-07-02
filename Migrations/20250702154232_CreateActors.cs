@@ -5,13 +5,13 @@
 namespace MovieApi.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateActor : Migration
+    public partial class CreateActors : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Actor",
+                name: "Actors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -21,7 +21,7 @@ namespace MovieApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Actor", x => x.Id);
+                    table.PrimaryKey("PK_Actors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,15 +35,15 @@ namespace MovieApi.Migrations
                 {
                     table.PrimaryKey("PK_MovieActor", x => new { x.ActorsId, x.MoviesId });
                     table.ForeignKey(
-                        name: "FK_MovieActor_Actor_ActorsId",
+                        name: "FK_MovieActor_Actors_ActorsId",
                         column: x => x.ActorsId,
-                        principalTable: "Actor",
+                        principalTable: "Actors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MovieActor_Movie_MoviesId",
+                        name: "FK_MovieActor_Movies_MoviesId",
                         column: x => x.MoviesId,
-                        principalTable: "Movie",
+                        principalTable: "Movies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -61,7 +61,7 @@ namespace MovieApi.Migrations
                 name: "MovieActor");
 
             migrationBuilder.DropTable(
-                name: "Actor");
+                name: "Actors");
         }
     }
 }

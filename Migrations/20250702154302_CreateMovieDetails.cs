@@ -25,9 +25,9 @@ namespace MovieApi.Migrations
                 {
                     table.PrimaryKey("PK_MovieDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MovieDetails_Movie_MovieId",
+                        name: "FK_MovieDetails_Movies_MovieId",
                         column: x => x.MovieId,
-                        principalTable: "Movie",
+                        principalTable: "Movies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
