@@ -5,10 +5,10 @@ namespace MovieApi.Data
 {
     public class MovieContext(DbContextOptions<MovieContext> options) : DbContext(options)
     {
-        DbSet<Genre> Genres { get; set; } = default!;
-        DbSet<Movie> Movies { get; set; } = default!;
-        DbSet<Movie> Reviews { get; set; } = default!;
-        DbSet<Movie> Actors { get; set; } = default!;
+        public DbSet<Genre> Genres { get; set; } = default!;
+        public DbSet<Movie> Movies { get; set; } = default!;
+        public DbSet<Movie> Reviews { get; set; } = default!;
+        public DbSet<Movie> Actors { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
