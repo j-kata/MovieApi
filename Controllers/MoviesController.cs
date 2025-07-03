@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
@@ -30,16 +31,35 @@ namespace MovieApi.Controllers
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<ActionResult<MovieDto>> GetMovie(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _context.Movies
+                .Include(m => m.Genre)
+                .Where(m => m.Id == id)
+                .ProjectTo<MovieDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
 
             if (movie == null)
-            {
                 return NotFound();
-            }
 
-            return movie;
+            return Ok(movie);
+        }
+
+        // GET: api/Movies/5/details
+        [HttpGet("{id}/details")]
+        public async Task<ActionResult<MovieDetailsDto>> GetMovieDetails(int id)
+        {
+            var movie = await _context.Movies
+                .Include(m => m.Genre)
+                .Include(m => m.MovieDetails)
+                .Where(m => m.Id == id)
+                .ProjectTo<MovieDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+
+            if (movie == null)
+                return NotFound();
+
+            return Ok(movie);
         }
 
         // PUT: api/Movies/5
