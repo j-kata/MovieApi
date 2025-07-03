@@ -79,9 +79,6 @@ namespace MovieApi.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MovieDetailsId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -93,9 +90,6 @@ namespace MovieApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("MovieDetailsId")
-                        .IsUnique();
 
                     b.ToTable("Movies");
                 });
@@ -123,6 +117,9 @@ namespace MovieApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MovieId")
+                        .IsUnique();
 
                     b.ToTable("MovieDetails");
                 });
@@ -182,15 +179,18 @@ namespace MovieApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieApi.Models.Entities.MovieDetails", "MovieDetails")
-                        .WithOne("Movie")
-                        .HasForeignKey("MovieApi.Models.Entities.Movie", "MovieDetailsId")
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
+                {
+                    b.HasOne("MovieApi.Models.Entities.Movie", "Movie")
+                        .WithOne("MovieDetails")
+                        .HasForeignKey("MovieApi.Models.Entities.MovieDetails", "MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Genre");
-
-                    b.Navigation("MovieDetails");
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Review", b =>
@@ -211,13 +211,10 @@ namespace MovieApi.Migrations
 
             modelBuilder.Entity("MovieApi.Models.Entities.Movie", b =>
                 {
-                    b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
-                {
-                    b.Navigation("Movie")
+                    b.Navigation("MovieDetails")
                         .IsRequired();
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

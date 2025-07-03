@@ -21,7 +21,6 @@ namespace MovieApi.Migrations
                     Year = table.Column<int>(type: "INTEGER", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     GenreId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MovieDetailsId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

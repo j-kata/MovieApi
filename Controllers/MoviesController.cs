@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
+using MovieApi.Models;
 using MovieApi.Models.Dtos;
 using MovieApi.Models.Entities;
 
@@ -51,7 +52,7 @@ namespace MovieApi.Controllers
         public async Task<ActionResult<MovieDetailsDto>> GetMovieDetails(int id)
         {
             var movie = await _mapper
-                .ProjectTo<MovieDetailsDto>(_context.Movies.Include(m => m.MovieDetails).Where(m => m.Id == id))
+                .ProjectTo<MovieDetailsDto>(_context.Movies.Where(m => m.Id == id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)
@@ -94,23 +95,26 @@ namespace MovieApi.Controllers
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto movieCreatedto)
         {
+            var movie = _mapper.Map<Movie>(movieCreatedto);
+
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
+            var movieDto = _mapper.Map<MovieDto>(movie);
+
+            return CreatedAtAction("GetMovie", new { id = movieDto.Id }, movieDto);
         }
 
         // DELETE: api/Movies/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _context.Movies.Where(m => m.Id == id).FirstOrDefaultAsync();
+
             if (movie == null)
-            {
                 return NotFound();
-            }
 
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();

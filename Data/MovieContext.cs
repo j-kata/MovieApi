@@ -32,7 +32,7 @@ namespace MovieApi.Data
             modelBuilder.Entity<Movie>()
                 .HasOne(m => m.MovieDetails)
                 .WithOne(d => d.Movie)
-                .HasForeignKey<Movie>(m => m.MovieDetailsId);
+                .HasForeignKey<MovieDetails>(d => d.MovieId);
         }
     }
 }

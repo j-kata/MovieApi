@@ -48,9 +48,6 @@ namespace MovieApi.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MovieDetailsId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
