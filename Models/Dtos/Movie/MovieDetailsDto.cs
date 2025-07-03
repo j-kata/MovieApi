@@ -1,4 +1,4 @@
-namespace MovieApi.Models.Dtos
+namespace MovieApi.Models.Dtos.Movie
 {
     public class MovieDetailsDto : MovieDto
     {

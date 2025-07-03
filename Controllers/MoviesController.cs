@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
 using MovieApi.Models;
 using MovieApi.Models.Dtos;
+using MovieApi.Models.Dtos.Movie;
 using MovieApi.Models.Entities;
 
 namespace MovieApi.Controllers
@@ -64,30 +65,20 @@ namespace MovieApi.Controllers
         // PUT: api/Movies/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateDto)
         {
-            if (id != movie.Id)
-            {
+            if (id != updateDto.Id)
                 return BadRequest();
-            }
 
-            _context.Entry(movie).State = EntityState.Modified;
+            var movie = await _context.Movies
+                .Include(m => m.MovieDetails)
+                .Where(m => m.Id == id).FirstOrDefaultAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MovieExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (movie is null)
+                return NotFound();
+
+            _mapper.Map(updateDto, movie);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -95,9 +86,9 @@ namespace MovieApi.Controllers
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto movieCreatedto)
+        public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto createDto)
         {
-            var movie = _mapper.Map<Movie>(movieCreatedto);
+            var movie = _mapper.Map<Movie>(createDto);
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
@@ -120,11 +111,6 @@ namespace MovieApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool MovieExists(int id)
-        {
-            return _context.Movies.Any(e => e.Id == id);
         }
     }
 }

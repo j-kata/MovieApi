@@ -1,6 +1,5 @@
 using AutoMapper;
-using MovieApi.Models;
-using MovieApi.Models.Dtos;
+using MovieApi.Models.Dtos.Movie;
 using MovieApi.Models.Entities;
 
 namespace MovieApi.Profiles
@@ -25,6 +24,12 @@ namespace MovieApi.Profiles
                 .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.GenreId))
                 .ForMember(dest => dest.MovieDetails, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => new TimeSpan(src.Hours, src.Minutes, 0)));
+
+            CreateMap<MovieUpdateDto, Movie>()
+                .IncludeBase<MovieCreateDto, Movie>()
+                .ForPath(dest => dest.MovieDetails.Budget, opt => opt.MapFrom(src => src.Budget))
+                .ForPath(dest => dest.MovieDetails.Synopsis, opt => opt.MapFrom(src => src.Synopsis))
+                .ForPath(dest => dest.MovieDetails.Language, opt => opt.MapFrom(src => src.Language));
         }
     }
 }
