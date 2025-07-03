@@ -25,18 +25,19 @@ namespace MovieApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieDto>>> GetMovies()
         {
-            var movies = await _context.Movies.Include(m => m.Genre).ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<MovieDto>>(movies));
+            var movies = await _mapper
+                .ProjectTo<MovieDto>(_context.Movies)
+                .ToListAsync();
+
+            return Ok(movies);
         }
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieDto>> GetMovie(int id)
         {
-            var movie = await _context.Movies
-                .Include(m => m.Genre)
-                .Where(m => m.Id == id)
-                .ProjectTo<MovieDto>(_mapper.ConfigurationProvider)
+            var movie = await _mapper
+                .ProjectTo<MovieDto>(_context.Movies.Where(m => m.Id == id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)
@@ -49,11 +50,8 @@ namespace MovieApi.Controllers
         [HttpGet("{id}/details")]
         public async Task<ActionResult<MovieDetailsDto>> GetMovieDetails(int id)
         {
-            var movie = await _context.Movies
-                .Include(m => m.Genre)
-                .Include(m => m.MovieDetails)
-                .Where(m => m.Id == id)
-                .ProjectTo<MovieDetailsDto>(_mapper.ConfigurationProvider)
+            var movie = await _mapper
+                .ProjectTo<MovieDetailsDto>(_context.Movies.Include(m => m.MovieDetails).Where(m => m.Id == id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)

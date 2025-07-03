@@ -16,7 +16,7 @@ namespace MovieApi.Models.Entities
         public ICollection<Actor> Actors { get; set; } = [];
         public ICollection<Review> Reviews { get; set; } = [];
 
-        // delegate to movie details
+        // delegate to MovieDetails
         public string Synopsis => MovieDetails.Synopsis;
         public string Language => MovieDetails.Language;
         public int Budget => MovieDetails.Budget;

@@ -1,5 +1,4 @@
 using AutoMapper;
-using Humanizer;
 
 namespace MovieApi.Profiles
 {
@@ -13,9 +12,9 @@ namespace MovieApi.Profiles
 
             CreateMap<Models.Entities.Movie, Models.Dtos.MovieDetailsDto>()
                 .IncludeBase<Models.Entities.Movie, Models.Dtos.MovieDto>();
-            // .ForMember(dest => dest.Synopsis, opt => opt.MapFrom(src => src.MovieDetails.Synopsis))
-            // .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetails.Language))
-            // .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetails.Budget));
+                // .ForMember(dest => dest.Synopsis, opt => opt.MapFrom(src => src.MovieDetails.Synopsis))
+                // .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetails.Language))
+                // .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetails.Budget));
         }
     }
 }
