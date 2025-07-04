@@ -27,7 +27,8 @@ namespace MovieApi.Data
             modelBuilder.Entity<Movie>()
                 .HasMany(m => m.Reviews)
                 .WithOne(r => r.Movie)
-                .HasForeignKey(r => r.MovieId);
+                .HasForeignKey(r => r.MovieId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Movie>()
                 .HasOne(m => m.MovieDetails)

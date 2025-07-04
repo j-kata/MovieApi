@@ -17,8 +17,8 @@ namespace MovieApi.Controllers
 
         public MoviesController(MovieContext context, IMapper mapper)
         {
-            _context = context; // TODO: validations
-            _mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Movies
@@ -37,7 +37,7 @@ namespace MovieApi.Controllers
         public async Task<ActionResult<MovieDto>> GetMovie(int id)
         {
             var movie = await _mapper
-                .ProjectTo<MovieDto>(_context.Movies.Where(m => m.Id == id))
+                .ProjectTo<MovieDto>(GetMovieById(id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)
@@ -100,15 +100,17 @@ namespace MovieApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            var movie = await _context.Movies.Where(m => m.Id == id).FirstOrDefaultAsync();
-
-            if (movie == null)
+            if (!await IsMovieExist(id)) // doesn't load the whole object
                 return NotFound();
 
-            _context.Movies.Remove(movie);
+            var movie = new Movie { Id = id };
+            _context.Entry(movie).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
+        private IQueryable<Movie> GetMovieById(int id) => _context.Movies.Where(m => m.Id == id);
+        private Task<bool> IsMovieExist(int id) => _context.Movies.AnyAsync(m => m.Id == id);
     }
 }
