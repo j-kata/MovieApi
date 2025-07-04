@@ -30,6 +30,9 @@ namespace MovieApi.Profiles
                 .ForPath(dest => dest.MovieDetails.Budget, opt => opt.MapFrom(src => src.Budget))
                 .ForPath(dest => dest.MovieDetails.Synopsis, opt => opt.MapFrom(src => src.Synopsis))
                 .ForPath(dest => dest.MovieDetails.Language, opt => opt.MapFrom(src => src.Language));
+
+            CreateMap<Review, ReviewDto>();
+            CreateMap<Actor, ActorDto>();
         }
     }
 }

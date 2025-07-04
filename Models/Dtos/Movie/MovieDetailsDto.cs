@@ -5,6 +5,7 @@ namespace MovieApi.Models.Dtos.Movie
         public string Synopsis { get; set; } = string.Empty;
         public string Language { get; set; } = string.Empty;
         public int Budget { get; set; }
-        // add reviews and actors 
+        public List<ReviewDto> Reviews { get; set; } = [];
+        public List<ActorDto> Actors { get; set; } = [];
     }
 }

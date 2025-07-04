@@ -3,8 +3,6 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
-using MovieApi.Models;
-using MovieApi.Models.Dtos;
 using MovieApi.Models.Dtos.Movie;
 using MovieApi.Models.Entities;
 
