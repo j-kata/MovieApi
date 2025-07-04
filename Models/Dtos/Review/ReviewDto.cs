@@ -1,4 +1,4 @@
-namespace MovieApi.Models.Dtos.Movie
+namespace MovieApi.Models.Dtos.Review
 {
     public class ReviewDto
     {

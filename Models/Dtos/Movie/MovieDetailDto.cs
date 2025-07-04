@@ -1,3 +1,5 @@
+using MovieApi.Models.Dtos.Review;
+
 namespace MovieApi.Models.Dtos.Movie
 {
     public class MovieDetailDto : MovieDto

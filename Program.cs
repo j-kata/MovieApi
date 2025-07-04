@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
 using MovieApi.Extensions;
@@ -13,7 +14,9 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddAutoMapper(opt => opt.AddProfile<MovieProfile>());
+builder.Services.AddAutoMapper(opt => opt.AddProfiles([
+    new MovieProfile(), new ReviewProfile()
+]));
 
 var app = builder.Build();
 
