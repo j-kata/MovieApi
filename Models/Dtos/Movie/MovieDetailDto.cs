@@ -1,6 +1,6 @@
 namespace MovieApi.Models.Dtos.Movie
 {
-    public class MovieDetailsDto : MovieDto
+    public class MovieDetailDto : MovieDto
     {
         public string? Synopsis { get; set; }
         public string? Language { get; set; }

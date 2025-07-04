@@ -2,12 +2,10 @@
 
 namespace MovieApi.Models.Entities
 {
-    public class MovieDetails
+    public class MovieDetail
     {
         public int Id { get; set; }
-        [MaxLength(255)]
         public string? Synopsis { get; set; }
-        [MaxLength(100)]
         public string? Language { get; set; }
         public int? Budget { get; set; }
         public int MovieId { get; set; }

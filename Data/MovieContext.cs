@@ -10,30 +10,8 @@ namespace MovieApi.Data
         public DbSet<Review> Reviews { get; set; } = default!;
         public DbSet<Actor> Actors { get; set; } = default!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MovieContext).Assembly);
 
-            modelBuilder.Entity<Movie>()
-                .HasOne(m => m.Genre)
-                .WithMany(g => g.Movies)
-                .HasForeignKey(m => m.GenreId);
-
-            modelBuilder.Entity<Movie>()
-                .HasMany(m => m.Actors)
-                .WithMany(a => a.Movies)
-                .UsingEntity(j => j.ToTable("MovieActor")); // Many-to-many relationship
-
-            modelBuilder.Entity<Movie>()
-                .HasMany(m => m.Reviews)
-                .WithOne(r => r.Movie)
-                .HasForeignKey(r => r.MovieId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Movie>()
-                .HasOne(m => m.MovieDetails)
-                .WithOne(d => d.Movie)
-                .HasForeignKey<MovieDetails>(d => d.MovieId);
-        }
     }
 }

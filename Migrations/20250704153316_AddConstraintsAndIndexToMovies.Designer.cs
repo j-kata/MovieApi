@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieApi.Data;
 
@@ -10,9 +11,11 @@ using MovieApi.Data;
 namespace MovieApi.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    partial class MovieContextModelSnapshot : ModelSnapshot
+    [Migration("20250704153316_AddConstraintsAndIndexToMovies")]
+    partial class AddConstraintsAndIndexToMovies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
@@ -64,10 +67,7 @@ namespace MovieApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Genres", (string)null);
+                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Movie", b =>
@@ -100,7 +100,7 @@ namespace MovieApi.Migrations
                     b.ToTable("Movies", (string)null);
                 });
 
-            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetail", b =>
+            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,7 +117,7 @@ namespace MovieApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Synopsis")
-                        .HasMaxLength(500)
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -125,7 +125,7 @@ namespace MovieApi.Migrations
                     b.HasIndex("MovieId")
                         .IsUnique();
 
-                    b.ToTable("MovieDetails", (string)null);
+                    b.ToTable("MovieDetails");
                 });
 
             modelBuilder.Entity("MovieApi.Models.Entities.Review", b =>
@@ -140,9 +140,7 @@ namespace MovieApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("MovieId")
                         .HasColumnType("INTEGER");
@@ -159,7 +157,7 @@ namespace MovieApi.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ActorMovie", b =>
@@ -188,11 +186,11 @@ namespace MovieApi.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetail", b =>
+            modelBuilder.Entity("MovieApi.Models.Entities.MovieDetails", b =>
                 {
                     b.HasOne("MovieApi.Models.Entities.Movie", "Movie")
-                        .WithOne("MovieDetail")
-                        .HasForeignKey("MovieApi.Models.Entities.MovieDetail", "MovieId")
+                        .WithOne("MovieDetails")
+                        .HasForeignKey("MovieApi.Models.Entities.MovieDetails", "MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -217,7 +215,7 @@ namespace MovieApi.Migrations
 
             modelBuilder.Entity("MovieApi.Models.Entities.Movie", b =>
                 {
-                    b.Navigation("MovieDetail")
+                    b.Navigation("MovieDetails")
                         .IsRequired();
 
                     b.Navigation("Reviews");

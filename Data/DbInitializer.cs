@@ -34,8 +34,8 @@ namespace MovieApi.Data
                 .RuleFor(o => o.Name, f => _genreNames[f.IndexVariable++])
                 .Generate(count);
 
-        private static MovieDetails GenerateMovieDetails() =>
-            new Faker<MovieDetails>()
+        private static MovieDetail GenerateMovieDetails() =>
+            new Faker<MovieDetail>()
                     .RuleFor(o => o.Synopsis, f => f.Lorem.Paragraph(2))
                     .RuleFor(o => o.Language, f => f.Lorem.Word())
                     .RuleFor(o => o.Budget, f => (int)f.Finance.Amount(100000, 500000000))
@@ -44,11 +44,11 @@ namespace MovieApi.Data
         private static IEnumerable<Movie> GenerateMovies(int count, IEnumerable<Genre> genres) =>
             new Faker<Movie>()
                 .RuleFor(o => o.Genre, f => f.PickRandom(genres))
-                .RuleFor(o => o.Title, f => f.Lorem.Sentence(1, 5))
+                .RuleFor(o => o.Title, f => $"{f.Lorem.Sentence(1, 5)} {f.UniqueIndex}")
                 .RuleFor(o => o.Year, f => f.Date.Past(40).Year)
                 .RuleFor(o => o.Duration, f => f.Date.Timespan(new TimeSpan(4, 0, 0)))
-                .RuleFor(o => o.MovieDetails, f => GenerateMovieDetails())
-                .FinishWith((f, o) => o.MovieDetails.Movie = o)
+                .RuleFor(o => o.MovieDetail, f => GenerateMovieDetails())
+                .FinishWith((f, o) => o.MovieDetail.Movie = o)
                 .Generate(count);
 
         private static IEnumerable<Review> GenerateReviews(int count, IEnumerable<Movie> movies) =>

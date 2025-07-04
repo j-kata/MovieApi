@@ -47,10 +47,10 @@ namespace MovieApi.Controllers
 
         // GET: api/Movies/5/details
         [HttpGet("{id}/details")]
-        public async Task<ActionResult<MovieDetailsDto>> GetMovieDetails(int id)
+        public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id)
         {
             var movie = await _mapper
-                .ProjectTo<MovieDetailsDto>(QueryMovieById(id))
+                .ProjectTo<MovieDetailDto>(QueryMovieById(id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)
@@ -68,7 +68,7 @@ namespace MovieApi.Controllers
                 return BadRequest();
 
             var movie = await QueryMovieById(id)
-                .Include(m => m.MovieDetails)
+                .Include(m => m.MovieDetail)
                 .FirstOrDefaultAsync();
 
             if (movie is null)
