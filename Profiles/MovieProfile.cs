@@ -18,21 +18,20 @@ namespace MovieApi.Profiles
                 .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetails.Language))
                 .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetails.Budget));
 
-            CreateMap<MovieCreateDto, MovieDetails>();
+            CreateMap<Review, ReviewDto>();
+            CreateMap<Actor, ActorDto>();
+
+            //CreateMap<MovieCreateDto, MovieDetails>();
 
             CreateMap<MovieCreateDto, Movie>()
-                .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.GenreId))
-                .ForMember(dest => dest.MovieDetails, opt => opt.MapFrom(src => src))
+                // .ForMember(dest => dest.MovieDetails, opt => opt.MapFrom(src => src))
+                .ForPath(dest => dest.MovieDetails.Budget, opt => opt.MapFrom(src => src.Budget))
+                .ForPath(dest => dest.MovieDetails.Synopsis, opt => opt.MapFrom(src => src.Synopsis))
+                .ForPath(dest => dest.MovieDetails.Language, opt => opt.MapFrom(src => src.Language))
                 .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => new TimeSpan(src.Hours, src.Minutes, 0)));
 
             CreateMap<MovieUpdateDto, Movie>()
-                .IncludeBase<MovieCreateDto, Movie>()
-                .ForPath(dest => dest.MovieDetails.Budget, opt => opt.MapFrom(src => src.Budget))
-                .ForPath(dest => dest.MovieDetails.Synopsis, opt => opt.MapFrom(src => src.Synopsis))
-                .ForPath(dest => dest.MovieDetails.Language, opt => opt.MapFrom(src => src.Language));
-
-            CreateMap<Review, ReviewDto>();
-            CreateMap<Actor, ActorDto>();
+                .IncludeBase<MovieCreateDto, Movie>();
         }
     }
 }

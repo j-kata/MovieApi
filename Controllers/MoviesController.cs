@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
@@ -37,7 +36,7 @@ namespace MovieApi.Controllers
         public async Task<ActionResult<MovieDto>> GetMovie(int id)
         {
             var movie = await _mapper
-                .ProjectTo<MovieDto>(GetMovieById(id))
+                .ProjectTo<MovieDto>(QueryMovieById(id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)
@@ -51,7 +50,7 @@ namespace MovieApi.Controllers
         public async Task<ActionResult<MovieDetailsDto>> GetMovieDetails(int id)
         {
             var movie = await _mapper
-                .ProjectTo<MovieDetailsDto>(_context.Movies.Where(m => m.Id == id))
+                .ProjectTo<MovieDetailsDto>(QueryMovieById(id))
                 .FirstOrDefaultAsync();
 
             if (movie == null)
@@ -68,9 +67,9 @@ namespace MovieApi.Controllers
             if (id != updateDto.Id)
                 return BadRequest();
 
-            var movie = await _context.Movies
+            var movie = await QueryMovieById(id)
                 .Include(m => m.MovieDetails)
-                .Where(m => m.Id == id).FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
 
             if (movie is null)
                 return NotFound();
@@ -90,6 +89,7 @@ namespace MovieApi.Controllers
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
+            await _context.Entry(movie).Reference(m => m.Genre).LoadAsync(); // load Genre to return Genre.Name in response
 
             var movieDto = _mapper.Map<MovieDto>(movie);
 
@@ -100,7 +100,7 @@ namespace MovieApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            if (!await IsMovieExist(id)) // doesn't load the whole object
+            if (!await IsMovieExist(id)) // no need to load the whole object
                 return NotFound();
 
             var movie = new Movie { Id = id };
@@ -110,7 +110,7 @@ namespace MovieApi.Controllers
             return NoContent();
         }
 
-        private IQueryable<Movie> GetMovieById(int id) => _context.Movies.Where(m => m.Id == id);
+        private IQueryable<Movie> QueryMovieById(int id) => _context.Movies.Where(m => m.Id == id);
         private Task<bool> IsMovieExist(int id) => _context.Movies.AnyAsync(m => m.Id == id);
     }
 }

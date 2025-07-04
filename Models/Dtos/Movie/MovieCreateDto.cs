@@ -14,8 +14,8 @@ namespace MovieApi.Models.Dtos.Movie
         public int Minutes { get; set; }
         [Required]
         public int GenreId { get; set; }
-        public string Synopsis { get; set; } = string.Empty; // TODO: make nullable
-        public string Language { get; set; } = string.Empty; // TODO: make nullable
-        public int Budget { get; set; }
+        public string? Synopsis { get; set; }
+        public string? Language { get; set; }
+        public int? Budget { get; set; }
     }
 }
