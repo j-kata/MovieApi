@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
+using MovieApi.Extensions;
 using MovieApi.Models.Dtos.Movie;
 using MovieApi.Models.Entities;
 
@@ -100,7 +101,7 @@ namespace MovieApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            if (!await IsMovieExist(id)) // no need to load the whole object
+            if (!await _context.IsMoviePresentAsync(id)) // no need to load the whole object
                 return NotFound();
 
             var movie = new Movie { Id = id };
@@ -111,6 +112,5 @@ namespace MovieApi.Controllers
         }
 
         private IQueryable<Movie> QueryMovieById(int id) => _context.Movies.Where(m => m.Id == id);
-        private Task<bool> IsMovieExist(int id) => _context.Movies.AnyAsync(m => m.Id == id);
     }
 }
