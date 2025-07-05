@@ -1,3 +1,4 @@
+using MovieApi.Models.Dtos.Actor;
 using MovieApi.Models.Dtos.Review;
 
 namespace MovieApi.Models.Dtos.Movie

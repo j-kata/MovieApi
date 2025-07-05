@@ -1,6 +1,5 @@
 using AutoMapper;
 using MovieApi.Models.Dtos.Movie;
-using MovieApi.Models.Dtos.Review;
 using MovieApi.Models.Entities;
 
 namespace MovieApi.Profiles
@@ -18,10 +17,6 @@ namespace MovieApi.Profiles
                 .ForMember(dest => dest.Synopsis, opt => opt.MapFrom(src => src.MovieDetail.Synopsis))
                 .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetail.Language))
                 .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetail.Budget));
-
-            CreateMap<Actor, ActorDto>();
-
-            //CreateMap<MovieCreateDto, MovieDetails>();
 
             CreateMap<MovieCreateDto, Movie>()
                 // .ForMember(dest => dest.MovieDetails, opt => opt.MapFrom(src => src))

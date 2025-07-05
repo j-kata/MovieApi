@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
 using MovieApi.Extensions;
@@ -15,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddAutoMapper(opt => opt.AddProfiles([
-    new MovieProfile(), new ReviewProfile()
+    new MovieProfile(), new ReviewProfile(), new ActorProfile()
 ]));
 
 var app = builder.Build();
