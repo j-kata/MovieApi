@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
-using MovieApi.Extensions;
 using MovieApi.Models.Dtos.Actor;
 using MovieApi.Models.Entities;
 
@@ -15,13 +14,20 @@ namespace MovieApi.Controllers
     {
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors()
+        public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
+            [FromQuery] string name
+        )
         {
-            var actors = await _mapper
-                .ProjectTo<ActorDto>(_context.Actors)
+            IQueryable<Actor> actors = _context.Actors.AsNoTracking();
+
+            if (name is not null)
+                actors = actors.Where(a => EF.Functions.Like(a.Name, $"%{name}%"));
+
+            var result = await _mapper
+                .ProjectTo<ActorDto>(actors)
                 .ToListAsync();
 
-            return Ok(actors);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

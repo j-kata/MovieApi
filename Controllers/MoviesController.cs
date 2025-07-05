@@ -15,13 +15,26 @@ namespace MovieApi.Controllers
     {
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieDto>>> GetMovies()
+        public async Task<ActionResult<IEnumerable<MovieDto>>> GetMovies(
+            [FromQuery] int? year,
+            [FromQuery] string? genre,
+            [FromQuery] string? actor
+        )
         {
-            var movies = await _mapper
-                .ProjectTo<MovieDto>(_context.Movies)
+            IQueryable<Movie> movies = _context.Movies.AsNoTracking();
+
+            if (year is not null)
+                movies = movies.Where(m => m.Year == year);
+            if (genre is not null)
+                movies = movies.Where(m => EF.Functions.Like(m.Genre.Name, genre));
+            if (actor is not null)
+                movies = movies.Where(m => m.Actors.Any(a => EF.Functions.Like(a.Name, $"%{actor}%")));
+
+            var result = await _mapper
+                .ProjectTo<MovieDto>(movies)
                 .ToListAsync();
 
-            return Ok(movies);
+            return Ok(result);
         }
 
         // GET: api/Movies/5
