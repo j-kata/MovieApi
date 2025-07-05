@@ -9,17 +9,9 @@ using MovieApi.Models.Entities;
 namespace MovieApi.Controllers
 {
     [ApiController]
-    public class ReviewsController : ControllerBase
+    public class ReviewsController(MovieContext context, IMapper mapper)
+        : AppController(context, mapper)
     {
-        private readonly MovieContext _context;
-        private readonly IMapper _mapper;
-
-        public ReviewsController(MovieContext context, IMapper mapper)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
-
         [HttpGet]
         [Route("api/movies/{movieId}/reviews")]
         public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId)

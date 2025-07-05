@@ -10,17 +10,9 @@ namespace MovieApi.Controllers
 {
     [ApiController]
     [Route("api/movies/{movieId}/actors")]
-    public class MovieActorsController : ControllerBase
+    public class MovieActorsController(MovieContext context, IMapper mapper)
+        : AppController(context, mapper)
     {
-        private readonly MovieContext _context;
-        private readonly IMapper _mapper;
-
-        public MovieActorsController(MovieContext context, IMapper mapper)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ActorDto>>> GetMovieActors(int movieId)
         {
