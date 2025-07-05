@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MovieApi.Validations;
 
 namespace MovieApi.Models.Dtos.Movie
 {
@@ -7,7 +8,7 @@ namespace MovieApi.Models.Dtos.Movie
         [Required]
         public string Title { get; set; } = string.Empty;
         [Required]
-        [Range(1800, 2100)]
+        [MovieEra(1888, 20)]
         public int Year { get; set; }
         [Required]
         [Range(0, 24)]
