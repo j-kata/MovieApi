@@ -27,6 +27,9 @@ namespace MovieApi.Profiles
 
             CreateMap<MovieUpdateDto, Movie>()
                 .IncludeBase<MovieCreateDto, Movie>();
+
+            CreateMap<Movie, MovieWithActorsDto>()
+                .IncludeBase<Movie, MovieDto>();
         }
     }
 }

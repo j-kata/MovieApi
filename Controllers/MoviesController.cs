@@ -39,16 +39,15 @@ namespace MovieApi.Controllers
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MovieDto>> GetMovie(int id)
+        public async Task<IActionResult> GetMovie(int id, [FromQuery] bool withActors = false)
         {
-            var movie = await _mapper
-                .ProjectTo<MovieDto>(QueryMovieById(id))
-                .FirstOrDefaultAsync();
-
+            var movie = QueryMovieById(id);
             if (movie == null)
                 return NotFound();
 
-            return Ok(movie);
+            return withActors
+                ? Ok(await _mapper.ProjectTo<MovieWithActorsDto>(movie).FirstOrDefaultAsync())
+                : Ok(await _mapper.ProjectTo<MovieDto>(movie).FirstOrDefaultAsync());
         }
 
         // GET: api/Movies/5/details
@@ -59,10 +58,7 @@ namespace MovieApi.Controllers
                 .ProjectTo<MovieDetailDto>(QueryMovieById(id))
                 .FirstOrDefaultAsync();
 
-            if (movie == null)
-                return NotFound();
-
-            return Ok(movie);
+            return movie is null ? NotFound() : Ok(movie);
         }
 
         // PUT: api/Movies/5
@@ -116,6 +112,7 @@ namespace MovieApi.Controllers
             return NoContent();
         }
 
-        private IQueryable<Movie> QueryMovieById(int id) => _context.Movies.Where(m => m.Id == id);
+        private IQueryable<Movie> QueryMovieById(int id) =>
+            _context.Movies.Where(m => m.Id == id);
     }
 }

@@ -37,10 +37,7 @@ namespace MovieApi.Controllers
                 .ProjectTo<ActorDto>(QueryActorById(id))
                 .FirstOrDefaultAsync();
 
-            if (actor == null)
-                return NotFound();
-
-            return Ok(actor);
+            return actor is null ? NotFound() : Ok(actor);
         }
 
         [HttpPut("{id}")]
