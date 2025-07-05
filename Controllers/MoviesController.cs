@@ -101,11 +101,11 @@ namespace MovieApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            if (!await _context.IsMoviePresentAsync(id)) // no need to load the whole object
+            if (!await _context.IsPresentAsync<Movie>(id)) // no need to load the whole object
                 return NotFound();
 
-            var movie = new Movie { Id = id };
-            _context.Entry(movie).State = EntityState.Deleted;
+            var movie = _context.AttachStubById<Movie>(id);
+            _context.Remove(movie);
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -24,7 +24,7 @@ namespace MovieApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ActorDto>>> GetMovieActors(int movieId)
         {
-            if (!await _context.IsMoviePresentAsync(movieId))
+            if (!await _context.IsPresentAsync<Movie>(movieId))
                 return NotFound();
 
             var actors = await _mapper
@@ -38,15 +38,14 @@ namespace MovieApi.Controllers
         [Route("{actorId}")]
         public async Task<IActionResult> PostMovieActor(int movieId, int actorId)
         {
-            var movieMissing = !await _context.IsMoviePresentAsync(movieId);
-            var actorMissing = !await _context.IsActorPresentAsync(actorId);
+            var movieMissing = !await _context.IsPresentAsync<Movie>(movieId);
+            var actorMissing = !await _context.IsPresentAsync<Actor>(actorId);
 
             if (movieMissing || actorMissing)
                 return NotFound();
 
-            var movie = new Movie { Id = movieId };
-            var actor = new Actor { Id = actorId };
-            _context.AttachRange(movie, actor);
+            var movie = _context.AttachStubById<Movie>(movieId);
+            var actor = _context.AttachStubById<Actor>(actorId);
 
             actor.Movies.Add(movie);
             await _context.SaveChangesAsync();

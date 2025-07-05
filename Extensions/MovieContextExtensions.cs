@@ -5,13 +5,16 @@ namespace MovieApi.Extensions
 {
     public static class MovieContextExtensions
     {
-        public static Task<bool> IsMoviePresentAsync(this MovieContext context, int movieId) =>
-            context.Movies.AnyAsync(m => m.Id == movieId);
+        public static Task<bool> IsPresentAsync<T>(this MovieContext context, int id) where T : class =>
+            context.Set<T>().AnyAsync(c => EF.Property<int>(c, "Id") == id);
 
-        public static Task<bool> IsReviewPresentAsync(this MovieContext context, int reviewId) =>
-            context.Reviews.AnyAsync(r => r.Id == reviewId);
+        public static T AttachStubById<T>(this MovieContext context, int id) where T : class, new()
+        {
+            var obj = new T();
+            typeof(T).GetProperty("Id")?.SetValue(obj, id);
 
-        public static Task<bool> IsActorPresentAsync(this MovieContext context, int actorId) =>
-            context.Actors.AnyAsync(a => a.Id == actorId);
+            context.Set<T>().Attach(obj);
+            return obj;
+        }
     }
 }

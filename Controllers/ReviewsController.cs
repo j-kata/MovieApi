@@ -24,7 +24,7 @@ namespace MovieApi.Controllers
         [Route("api/movies/{movieId}/reviews")]
         public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId)
         {
-            if (!await _context.IsMoviePresentAsync(movieId))
+            if (!await _context.IsPresentAsync<Movie>(movieId))
                 return NotFound();
 
             var reviews = await _mapper
@@ -38,7 +38,7 @@ namespace MovieApi.Controllers
         [Route("api/movies/{movieId}/reviews")]
         public async Task<ActionResult<ReviewDto>> PostMovieReview(int movieId, ReviewCreateDto createDto)
         {
-            if (!await _context.IsMoviePresentAsync(movieId))
+            if (!await _context.IsPresentAsync<Movie>(movieId))
                 return NotFound();
 
             var review = _mapper.Map<Review>(createDto);
@@ -56,11 +56,11 @@ namespace MovieApi.Controllers
         [Route("api/reviews/{id}")]
         public async Task<IActionResult> DeleteReview(int id)
         {
-            if (!await _context.IsReviewPresentAsync(id))
+            if (!await _context.IsPresentAsync<Review>(id))
                 return NotFound();
 
-            var review = new Review { Id = id };
-            _context.Entry(review).State = EntityState.Deleted;
+            var review = _context.AttachStubById<Review>(id);
+            _context.Remove(review);
             await _context.SaveChangesAsync();
 
             return NoContent();
