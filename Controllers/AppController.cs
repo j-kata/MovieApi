@@ -4,16 +4,18 @@ using MovieApi.Data;
 
 namespace MovieApi.Controllers
 {
+    /// <summary>
+    /// Base application controller
+    /// </summary>
+    /// <param name="context">Context</param>
+    /// <param name="mapper">Mapper</param>
     [ApiController]
-    public class AppController : ControllerBase
+    [Produces("application/json")]
+    public class AppController(MovieContext context, IMapper mapper) : ControllerBase
     {
-        protected readonly MovieContext _context;
-        protected readonly IMapper _mapper;
-
-        public AppController(MovieContext context, IMapper mapper)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+        protected readonly MovieContext _context = context
+            ?? throw new ArgumentNullException(nameof(context));
+        protected readonly IMapper _mapper = mapper
+            ?? throw new ArgumentNullException(nameof(mapper));
     }
 }
