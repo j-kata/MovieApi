@@ -9,6 +9,6 @@ namespace MovieApi.Models.Dtos.Movie
         public string? Language { get; set; }
         public int? Budget { get; set; }
         public List<ReviewDto> Reviews { get; set; } = [];
-        public List<ActorDto> Actors { get; set; } = [];
+        public List<ActorWithRoleDto> Actors { get; set; } = [];
     }
 }

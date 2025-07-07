@@ -28,7 +28,7 @@ namespace MovieApi.Controllers
             if (genre is not null)
                 movies = movies.Where(m => EF.Functions.Like(m.Genre.Name, genre));
             if (actor is not null)
-                movies = movies.Where(m => m.Actors.Any(a => EF.Functions.Like(a.Name, $"%{actor}%")));
+                movies = movies.Where(m => m.Roles.Any(a => EF.Functions.Like(a.Actor.Name, $"%{actor}%")));
 
             var result = await _mapper
                 .ProjectTo<MovieDto>(movies)

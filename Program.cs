@@ -13,8 +13,12 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// TODO: load all at once automatically?
 builder.Services.AddAutoMapper(opt => opt.AddProfiles([
-    new MovieProfile(), new ReviewProfile(), new ActorProfile()
+    new MovieProfile(),
+    new ReviewProfile(),
+    new ActorProfile(),
+    new RoleProfile()
 ]));
 
 var app = builder.Build();

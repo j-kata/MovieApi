@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using MovieApi.Models.Dtos.Actor;
 using MovieApi.Models.Dtos.Movie;
 using MovieApi.Models.Entities;
 
@@ -16,7 +18,8 @@ namespace MovieApi.Profiles
                 .IncludeBase<Movie, MovieDto>()
                 .ForMember(dest => dest.Synopsis, opt => opt.MapFrom(src => src.MovieDetail.Synopsis))
                 .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetail.Language))
-                .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetail.Budget));
+                .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetail.Budget))
+                .ForMember(dest => dest.Actors, opt => opt.MapFrom(src => src.Roles));
 
             CreateMap<MovieCreateDto, Movie>()
                 // .ForMember(dest => dest.MovieDetails, opt => opt.MapFrom(src => src))
@@ -29,7 +32,8 @@ namespace MovieApi.Profiles
                 .IncludeBase<MovieCreateDto, Movie>();
 
             CreateMap<Movie, MovieWithActorsDto>()
-                .IncludeBase<Movie, MovieDto>();
+                .IncludeBase<Movie, MovieDto>()
+                .ForMember(dest => dest.Actors, opt => opt.MapFrom(src => src.Roles));
         }
     }
 }

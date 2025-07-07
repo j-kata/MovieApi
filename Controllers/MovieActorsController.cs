@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
 using MovieApi.Extensions;
 using MovieApi.Models.Dtos.Actor;
+using MovieApi.Models.Dtos.Movie;
 using MovieApi.Models.Entities;
 
 namespace MovieApi.Controllers
@@ -14,13 +15,13 @@ namespace MovieApi.Controllers
         : AppController(context, mapper)
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ActorDto>>> GetMovieActors(int movieId)
+        public async Task<ActionResult<IEnumerable<ActorWithRoleDto>>> GetMovieActors(int movieId)
         {
             if (!await _context.IsPresentAsync<Movie>(movieId))
                 return NotFound();
 
             var actors = await _mapper
-                .ProjectTo<ActorDto>(_context.Movies.Where(a => a.Id == movieId).SelectMany(a => a.Actors))
+                .ProjectTo<ActorWithRoleDto>(QueryMovieById(movieId).SelectMany(m => m.Roles))
                 .ToListAsync();
 
             return Ok(actors);
@@ -28,7 +29,11 @@ namespace MovieApi.Controllers
 
         [HttpPost]
         [Route("{actorId}")]
-        public async Task<IActionResult> PostMovieActor(int movieId, int actorId)
+        public async Task<IActionResult> PostMovieActor(
+            [FromRoute] int movieId,
+            [FromRoute] int actorId,
+            [FromBody] RoleCreateDto createDto
+            )
         {
             var movieMissing = !await _context.IsPresentAsync<Movie>(movieId);
             var actorMissing = !await _context.IsPresentAsync<Actor>(actorId);
@@ -36,13 +41,17 @@ namespace MovieApi.Controllers
             if (movieMissing || actorMissing)
                 return NotFound();
 
-            var movie = _context.AttachStubById<Movie>(movieId);
-            var actor = _context.AttachStubById<Actor>(actorId);
+            var role = _mapper.Map<Role>(createDto);
+            role.ActorId = actorId;
+            role.MovieId = movieId;
 
-            actor.Movies.Add(movie);
+            _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetMovieActors), new { movieId }, createDto);
         }
+
+        private IQueryable<Movie> QueryMovieById(int id) =>
+                _context.Movies.Where(m => m.Id == id);
     }
 }
