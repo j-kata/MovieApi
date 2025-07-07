@@ -41,7 +41,7 @@ namespace MovieApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovie(int id, [FromQuery] bool withActors = false)
         {
-            var movie = QueryMovieById(id);
+            var movie = _context.QueryById<Movie>(id);
             if (movie == null)
                 return NotFound();
 
@@ -55,7 +55,7 @@ namespace MovieApi.Controllers
         public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id)
         {
             var movie = await _mapper
-                .ProjectTo<MovieDetailDto>(QueryMovieById(id))
+                .ProjectTo<MovieDetailDto>(_context.QueryById<Movie>(id))
                 .FirstOrDefaultAsync();
 
             return movie is null ? NotFound() : Ok(movie);
@@ -69,7 +69,7 @@ namespace MovieApi.Controllers
             if (id != updateDto.Id)
                 return BadRequest();
 
-            var movie = await QueryMovieById(id)
+            var movie = await _context.QueryById<Movie>(id)
                 .Include(m => m.MovieDetail)
                 .FirstOrDefaultAsync();
 
@@ -111,8 +111,5 @@ namespace MovieApi.Controllers
 
             return NoContent();
         }
-
-        private IQueryable<Movie> QueryMovieById(int id) =>
-            _context.Movies.Where(m => m.Id == id);
     }
 }

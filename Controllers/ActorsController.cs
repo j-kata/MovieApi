@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
+using MovieApi.Extensions;
 using MovieApi.Models.Dtos.Actor;
 using MovieApi.Models.Entities;
 
@@ -34,7 +35,7 @@ namespace MovieApi.Controllers
         public async Task<ActionResult<ActorDto>> GetActor(int id)
         {
             var actor = await _mapper
-                .ProjectTo<ActorDto>(QueryActorById(id))
+                .ProjectTo<ActorDto>(_context.QueryById<Actor>(id))
                 .FirstOrDefaultAsync();
 
             return actor is null ? NotFound() : Ok(actor);
@@ -46,7 +47,7 @@ namespace MovieApi.Controllers
             if (id != updateDto.Id)
                 return BadRequest();
 
-            var actor = await QueryActorById(id)
+            var actor = await _context.QueryById<Actor>(id)
                 .FirstOrDefaultAsync();
 
             if (actor is null)
@@ -70,7 +71,5 @@ namespace MovieApi.Controllers
 
             return CreatedAtAction("GetActor", new { id = actor.Id }, actorDto);
         }
-
-        private IQueryable<Actor> QueryActorById(int id) => _context.Actors.Where(a => a.Id == id);
     }
 }

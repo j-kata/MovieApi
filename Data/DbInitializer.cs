@@ -39,10 +39,10 @@ namespace MovieApi.Data
 
         private static MovieDetail GenerateMovieDetails() =>
             new Faker<MovieDetail>()
-                    .RuleFor(o => o.Synopsis, f => f.Lorem.Paragraph(2))
-                    .RuleFor(o => o.Language, f => f.Lorem.Word())
-                    .RuleFor(o => o.Budget, f => (int)f.Finance.Amount(100000, 500000000))
-                    .Generate();
+                .RuleFor(o => o.Synopsis, f => f.Lorem.Paragraph(2))
+                .RuleFor(o => o.Language, f => f.Lorem.Word())
+                .RuleFor(o => o.Budget, f => (int)f.Finance.Amount(100000, 500000000))
+                .Generate();
 
         private static IEnumerable<Movie> GenerateMovies(int count, IEnumerable<Genre> genres) =>
             new Faker<Movie>()

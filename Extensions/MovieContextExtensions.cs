@@ -8,6 +8,9 @@ namespace MovieApi.Extensions
         public static Task<bool> IsPresentAsync<T>(this MovieContext context, int id) where T : class =>
             context.Set<T>().AnyAsync(c => EF.Property<int>(c, "Id") == id);
 
+        public static IQueryable<T> QueryById<T>(this MovieContext context, int id) where T : class =>
+            context.Set<T>().Where(c => EF.Property<int>(c, "Id") == id);
+
         public static T AttachStubById<T>(this MovieContext context, int id) where T : class, new()
         {
             var obj = new T();

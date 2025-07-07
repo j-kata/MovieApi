@@ -21,7 +21,9 @@ namespace MovieApi.Controllers
                 return NotFound();
 
             var actors = await _mapper
-                .ProjectTo<ActorWithRoleDto>(QueryMovieById(movieId).SelectMany(m => m.Roles))
+                .ProjectTo<ActorWithRoleDto>(
+                    _context.QueryById<Movie>(movieId)
+                    .SelectMany(m => m.Roles))
                 .ToListAsync();
 
             return Ok(actors);
@@ -50,8 +52,5 @@ namespace MovieApi.Controllers
 
             return CreatedAtAction(nameof(GetMovieActors), new { movieId }, createDto);
         }
-
-        private IQueryable<Movie> QueryMovieById(int id) =>
-                _context.Movies.Where(m => m.Id == id);
     }
 }
