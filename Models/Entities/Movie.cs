@@ -9,7 +9,7 @@
         public int GenreId { get; set; }
         public Genre Genre { get; set; } = null!;
         public MovieDetail MovieDetail { get; set; } = null!;
-        public ICollection<Actor> Actors { get; set; } = [];
+        public ICollection<Role> Roles { get; set; } = [];
         public ICollection<Review> Reviews { get; set; } = [];
     }
 }

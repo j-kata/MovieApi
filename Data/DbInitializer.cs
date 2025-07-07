@@ -23,8 +23,11 @@ namespace MovieApi.Data
             var reviews = GenerateReviews(100, movies);
             await context.AddRangeAsync(reviews);
 
-            var actors = GenerateActors(100, movies);
+            var actors = GenerateActors(100);
             await context.AddRangeAsync(actors);
+
+            var roles = GenerateRoles(500, movies, actors);
+            await context.AddRangeAsync(roles);
 
             await context.SaveChangesAsync();
         }
@@ -59,12 +62,36 @@ namespace MovieApi.Data
                 .RuleFor(o => o.Rating, f => f.Random.Number(1, 5))
                 .Generate(count);
 
-        private static IEnumerable<Actor> GenerateActors(int count, IEnumerable<Movie> movies) =>
+        private static IEnumerable<Actor> GenerateActors(int count) =>
             new Faker<Actor>()
                 .RuleFor(o => o.Name, f => f.Name.FullName())
                 .RuleFor(o => o.BirthYear, f => f.Date.Past(100, DateTime.Now.AddYears(-2)).Year)
-                .RuleFor(o => o.Movies, f => f.PickRandom(movies.ToList(), 5).ToList())
                 .Generate(count);
 
+        private static IEnumerable<Role> GenerateRoles(int count, IEnumerable<Movie> movies, IEnumerable<Actor> actors)
+        {
+            HashSet<(Movie, Actor)> uniquePairs = [];
+            Faker faker = new();
+            List<Role> roles = [];
+
+            for (int i = 0; i < count; i++)
+            {
+                var movie = faker.PickRandom(movies);
+                var actor = faker.PickRandom(actors);
+                var pair = (movie, actor);
+
+                if (uniquePairs.Contains(pair))
+                    continue;
+
+                uniquePairs.Add(pair);
+                roles.Add(new Role
+                {
+                    Title = faker.Name.JobTitle(),
+                    Movie = movie,
+                    Actor = actor
+                });
+            }
+            return roles;
+        }
     }
 }

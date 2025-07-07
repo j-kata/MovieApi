@@ -18,10 +18,6 @@ namespace MovieApi.Data.Configurations
 
             builder.Property(a => a.BirthYear)
                 .IsRequired();
-
-            builder.HasMany(a => a.Movies)
-                .WithMany(m => m.Actors)
-                .UsingEntity(j => j.ToTable("MovieActor"));
         }
     }
 }
