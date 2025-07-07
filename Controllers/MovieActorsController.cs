@@ -30,21 +30,18 @@ namespace MovieApi.Controllers
         }
 
         [HttpPost]
-        [Route("{actorId}")]
         public async Task<IActionResult> PostMovieActor(
             [FromRoute] int movieId,
-            [FromRoute] int actorId,
             [FromBody] RoleCreateDto createDto
             )
         {
             var movieMissing = !await _context.IsPresentAsync<Movie>(movieId);
-            var actorMissing = !await _context.IsPresentAsync<Actor>(actorId);
+            var actorMissing = !await _context.IsPresentAsync<Actor>(createDto.ActorId);
 
             if (movieMissing || actorMissing)
                 return NotFound();
 
             var role = _mapper.Map<Role>(createDto);
-            role.ActorId = actorId;
             role.MovieId = movieId;
 
             _context.Roles.Add(role);

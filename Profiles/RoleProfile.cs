@@ -16,7 +16,8 @@ namespace MovieApi.Profiles
                 .ForMember(dest => dest.BirthYear, opt => opt.MapFrom(src => src.Actor.BirthYear))
                 .ForMember(dest => dest.Role, obj => obj.MapFrom(src => src.Title));
 
-            CreateMap<RoleCreateDto, Role>();
+            CreateMap<RoleCreateDto, Role>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Role));
         }
     }
 }

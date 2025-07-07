@@ -39,11 +39,14 @@ namespace MovieApi.Controllers
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetMovie(int id, [FromQuery] bool withActors = false)
+        public async Task<IActionResult> GetMovie(
+            int id,
+            [FromQuery] bool withActors = false)
         {
-            var movie = _context.QueryById<Movie>(id);
-            if (movie == null)
+            if (!await _context.IsPresentAsync<Movie>(id))
                 return NotFound();
+
+            var movie = _context.QueryById<Movie>(id);
 
             return withActors
                 ? Ok(await _mapper.ProjectTo<MovieWithActorsDto>(movie).FirstOrDefaultAsync())

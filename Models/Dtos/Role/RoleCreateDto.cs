@@ -5,7 +5,10 @@ namespace MovieApi.Models.Dtos.Movie
     public class RoleCreateDto
     {
         [Required]
+        public int ActorId { get; set; }
+
+        [Required]
         [MaxLength(100)]
-        public string Title { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
     }
 }
