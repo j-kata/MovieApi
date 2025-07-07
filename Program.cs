@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
 using MovieApi.Extensions;
@@ -11,7 +12,13 @@ builder.Services.AddDbContext<MovieContext>(dbContextOptions =>
     ?? throw new InvalidOperationException("Connection string 'MovieContext' not found")));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(setup =>
+{
+    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+
+    setup.IncludeXmlComments(xmlCommentsFullPath);
+});
 
 // TODO: load all at once automatically?
 builder.Services.AddAutoMapper(opt => opt.AddProfiles([
