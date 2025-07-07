@@ -10,8 +10,8 @@ builder.Services.AddDbContext<MovieContext>(dbContextOptions =>
     dbContextOptions.UseSqlite(builder.Configuration.GetConnectionString("MovieContext")
     ?? throw new InvalidOperationException("Connection string 'MovieContext' not found")));
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // TODO: load all at once automatically?
 builder.Services.AddAutoMapper(opt => opt.AddProfiles([
@@ -26,9 +26,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
     app.UseSwaggerUI(options =>
-        options.SwaggerEndpoint("/openapi/v1.json", "v1")
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1")
     );
 
     app.SeedData().Wait();
