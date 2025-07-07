@@ -6,12 +6,24 @@ using MovieApi.Models.Entities;
 
 namespace MovieApi.Controllers
 {
+    /// <summary>
+    /// Reviews controller
+    /// </summary>
+    /// <param name="context">Context</param>
+    /// <param name="mapper">Mapper</param>
     [ApiController]
     [Route("api/reviews/{id}")]
     public class ReviewsController(MovieContext context, IMapper mapper)
         : AppController(context, mapper)
     {
+        /// <summary>
+        /// Delete review by id
+        /// </summary>
+        /// <param name="id">Id of review</param>
+        /// <returns>No content if successful, or 404 if not found</returns>
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteReview(int id)
         {
             if (!await _context.IsPresentAsync<Review>(id))
@@ -23,8 +35,5 @@ namespace MovieApi.Controllers
 
             return NoContent();
         }
-
-        private IQueryable<Review> QueryReviewByMovieId(int movieId) =>
-            _context.Reviews.Where(r => r.MovieId == movieId);
     }
 }

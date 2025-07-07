@@ -8,12 +8,24 @@ using MovieApi.Models.Entities;
 
 namespace MovieApi.Controllers
 {
+    /// <summary>
+    /// Movie reviews controller
+    /// </summary>
+    /// <param name="context">Context</param>
+    /// <param name="mapper">Mapper</param>
     [ApiController]
     [Route("api/movies/{movieId}/reviews")]
     public class MovieReviewsController(MovieContext context, IMapper mapper)
         : AppController(context, mapper)
     {
+        /// <summary>
+        /// Retrieve all reviews of a specified movie
+        /// </summary>
+        /// <param name="movieId">Id of the movie</param>
+        /// <returns>List of matching reviews, or 404 if movie not found</returns>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId)
         {
             if (!await _context.IsPresentAsync<Movie>(movieId))
@@ -26,7 +38,16 @@ namespace MovieApi.Controllers
             return Ok(reviews);
         }
 
+        /// <summary>
+        /// Create new review of the specified movie
+        /// </summary>
+        /// <param name="movieId">Id of the movie</param>
+        /// <param name="createDto">Review information</param>
+        /// <returns>Review if created, 404 if movie not found, 400 if request not valid</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ReviewDto>> PostMovieReview(int movieId, ReviewCreateDto createDto)
         {
             if (!await _context.IsPresentAsync<Movie>(movieId))

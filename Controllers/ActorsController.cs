@@ -9,7 +9,7 @@ using MovieApi.Models.Entities;
 namespace MovieApi.Controllers
 {
     /// <summary>
-    /// Actor controller
+    /// Actors controller
     /// </summary>
     /// <param name="context">Context</param>
     /// <param name="mapper">Mapper</param>
@@ -19,7 +19,7 @@ namespace MovieApi.Controllers
         : AppController(context, mapper)
     {
         /// <summary>
-        /// Retrieves all actors, optionally filtered by name.
+        /// Retrieve all actors, optionally filtered by name.
         /// </summary>
         /// <param name="name">Name of the actor</param>
         /// <returns>List of matching actors</returns>
@@ -45,7 +45,7 @@ namespace MovieApi.Controllers
         /// Retrieve actor by id
         /// </summary>
         /// <param name="id">Id of the actor</param>
-        /// <returns>Actor with the specified ID, or 404 if not found</returns>
+        /// <returns>Actor with the specified Id, or 404 if not found</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -63,7 +63,7 @@ namespace MovieApi.Controllers
         /// </summary>
         /// <param name="id">Id of the actor</param>
         /// <param name="updateDto">New values for the actor</param>
-        /// <returns>No content if successful, 404 if id not found, 400 if ids do not match</returns>
+        /// <returns>No content if successful, 404 if id not found, 400 if request not valid</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,7 +89,7 @@ namespace MovieApi.Controllers
         /// Create new actor
         /// </summary>
         /// <param name="createDto">Values for the new actor</param>
-        /// <returns>New actor if created</returns>
+        /// <returns>New actor if created, 400 if request not valid</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

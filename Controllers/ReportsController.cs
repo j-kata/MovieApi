@@ -6,12 +6,22 @@ using MovieApi.Models.Dtos.Reports;
 
 namespace MovieApi.Controllers
 {
+    /// <summary>
+    /// Reports controller
+    /// </summary>
+    /// <param name="context">Context</param>
+    /// <param name="mapper">Mapper</param>
     [ApiController]
     [Route("api/reports")]
     public class ReportsController(MovieContext context, IMapper mapper)
         : AppController(context, mapper)
     {
+        /// <summary>
+        /// Retrieve 5 movies with highest ranking for each genre
+        /// </summary>
+        /// <returns>List of genres with movies</returns>
         [HttpGet("movies/top5pergenre")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TopMoviesByGenreDto>>> GetTopFiveByGenre()
         {
             var report = await _context.Movies
@@ -34,7 +44,12 @@ namespace MovieApi.Controllers
             return Ok(report);
         }
 
+        /// <summary>
+        /// Retrieve average film rating for each genre
+        /// </summary>
+        /// <returns>List of genres with average rating</returns>
         [HttpGet("movies/average-ratings")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<GenreWithRatingDto>>> GetRatingsByGenre()
         {
             var report = await _context.Reviews
@@ -49,7 +64,13 @@ namespace MovieApi.Controllers
             return Ok(report);
         }
 
+        /// <summary>
+        /// Retrieve actor with highest number of movies
+        /// </summary>
+        /// <returns>Actor, or 404 if not found</returns>
         [HttpGet("actors/most-active")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ActorWithRolesCountDto>> GetMostActiveActor()
         {
             var report = await _context.Actors
@@ -65,7 +86,13 @@ namespace MovieApi.Controllers
             return report is null ? NotFound() : Ok(report);
         }
 
+        /// <summary>
+        /// Retrieve movie with the highest number of reviews
+        /// </summary>
+        /// <returns>Movie, or 404 if not found</returns>
         [HttpGet("movies/with-most-reviews")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<MovieWithReviewsCountDto>> GetFilmsWithMostReviews()
         {
             var report = await _context.Movies
@@ -81,6 +108,10 @@ namespace MovieApi.Controllers
             return report is null ? NotFound() : Ok(report);
         }
 
+        /// <summary>
+        /// Retrieve genre with highest film ranking
+        /// </summary>
+        /// <returns>Genre, or 404 if not found</returns>
         [HttpGet("genres/popular")]
         public async Task<ActionResult<GenreWithMovieCountDto>> GetMostPopularGenre()
         {
