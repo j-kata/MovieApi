@@ -16,7 +16,7 @@ namespace MovieApi.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
-            [FromQuery] string name
+            [FromQuery] string? name
         )
         {
             IQueryable<Actor> actors = _context.Actors.AsNoTracking();
