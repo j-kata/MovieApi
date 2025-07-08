@@ -94,13 +94,16 @@ namespace MovieApi.Controllers
         /// </summary>
         /// <param name="id">Id of the movie</param>
         /// <param name="updateDto">New values for the movie</param>
-        /// <returns>No content if successful, 404 if not found, 400 if request not valid</returns>
+        /// <returns>No content if successful, 404 if movie not found, 400 if request not valid</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateDto)
         {
+            if (!await _context.IsPresentAsync<Genre>(updateDto.GenreId))
+                return BadRequest();
+
             if (id != updateDto.Id)
                 return BadRequest();
 
@@ -127,6 +130,9 @@ namespace MovieApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto createDto)
         {
+            if (!await _context.IsPresentAsync<Genre>(createDto.GenreId))
+                return BadRequest();
+
             var movie = _mapper.Map<Movie>(createDto);
 
             _context.Movies.Add(movie);

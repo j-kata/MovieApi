@@ -65,6 +65,8 @@ namespace MovieApi.Controllers
         }
 
         private IQueryable<Review> QueryReviewByMovieId(int movieId) =>
-            _context.Reviews.Where(r => r.MovieId == movieId);
+            _context.Reviews
+            .Where(r => r.MovieId == movieId)
+            .OrderByDescending(r => r.CreatedAt);
     }
 }
