@@ -34,7 +34,7 @@ namespace MovieApi.Controllers
                     {
                         Id = m.Id,
                         Title = m.Title,
-                        Rating = m.Reviews.Average(r => r.Rating)
+                        Rating = Math.Round(m.Reviews.Average(r => r.Rating), 2)
                     })
                     .OrderByDescending(m => m.Rating)
                     .Take(5)
@@ -57,7 +57,7 @@ namespace MovieApi.Controllers
                 .Select(g => new GenreWithRatingDto
                 {
                     Genre = g.Key.Name,
-                    Rating = g.Average(g => g.Rating)
+                    Rating = Math.Round(g.Average(g => g.Rating), 2)
                 })
                 .ToListAsync();
 
