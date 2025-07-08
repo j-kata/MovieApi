@@ -67,6 +67,7 @@ namespace MovieApi.Controllers
 
             var movie = _context.QueryById<Movie>(id);
 
+            // or one dto with optional actors list?
             return withActors
                 ? Ok(await _mapper.ProjectTo<MovieWithActorsDto>(movie).FirstOrDefaultAsync())
                 : Ok(await _mapper.ProjectTo<MovieDto>(movie).FirstOrDefaultAsync());
@@ -107,9 +108,10 @@ namespace MovieApi.Controllers
             if (id != updateDto.Id)
                 return BadRequest();
 
-            var movie = await _context.QueryById<Movie>(id)
+
+            var movie = await _context.Movies
                 .Include(m => m.MovieDetail)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie is null)
                 return NotFound();

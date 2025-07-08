@@ -73,8 +73,8 @@ namespace MovieApi.Controllers
             if (id != updateDto.Id)
                 return BadRequest();
 
-            var actor = await _context.QueryById<Actor>(id)
-                .FirstOrDefaultAsync();
+            var actor = await _context.Actors
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (actor is null)
                 return NotFound();
