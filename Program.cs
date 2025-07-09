@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MovieContext>(dbContextOptions =>
     dbContextOptions.UseSqlite(builder.Configuration.GetConnectionString("MovieContext")
     ?? throw new InvalidOperationException("Connection string 'MovieContext' not found")));
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(setup =>
 {

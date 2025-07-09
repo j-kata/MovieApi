@@ -14,7 +14,6 @@ namespace MovieApi.Controllers
     /// </summary>
     /// <param name="context">Context</param>
     /// <param name="mapper">Mapper</param>
-    [ApiController]
     [Route("api/movies/{movieId}/actors")]
     public class RolesController(MovieContext context, IMapper mapper)
         : AppController(context, mapper)

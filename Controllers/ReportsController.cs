@@ -11,7 +11,6 @@ namespace MovieApi.Controllers
     /// </summary>
     /// <param name="context">Context</param>
     /// <param name="mapper">Mapper</param>
-    [ApiController]
     [Route("api/reports")]
     public class ReportsController(MovieContext context, IMapper mapper)
         : AppController(context, mapper)
