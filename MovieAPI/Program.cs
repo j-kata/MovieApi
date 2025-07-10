@@ -1,8 +1,8 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using MovieAPI.Data;
+using MovieData;
 using MovieAPI.Extensions;
-using MovieAPI.Profiles;
+using MovieData.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MovieAPI.Data;
+using MovieData;
 using MovieAPI.Extensions;
-using MovieAPI.Models.Dtos.Review;
-using MovieAPI.Models.Entities;
+using MovieCore.Dtos.Review;
+using MovieCore.Entities;
 
 namespace MovieAPI.Controllers
 {

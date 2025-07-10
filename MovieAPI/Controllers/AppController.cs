@@ -1,6 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MovieAPI.Data;
+using MovieData;
 
 namespace MovieAPI.Controllers
 {

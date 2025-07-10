@@ -1,4 +1,4 @@
-using MovieAPI.Data;
+using MovieData;
 
 namespace MovieAPI.Extensions
 {
@@ -18,7 +18,7 @@ namespace MovieAPI.Extensions
 
             try
             {
-                await DbInitializer.Seed(context, env);
+                await DbInitializer.Seed(context);
             }
             catch (Exception ex)
             {
