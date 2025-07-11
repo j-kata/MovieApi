@@ -24,12 +24,11 @@ public class ReviewsController(IUnitOfWork uow, IMapper mapper)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteReview(int id)
     {
-        if (!await uow.Reviews.AnyAsync(id))
+        if (!await uow.Reviews.AnyByIdAsync(id))
             return NotFound();
 
-        var review = new Review { Id = id };
-        uow.Reviews.Attach(review);
-        uow.Reviews.Delete(review);
+        uow.Reviews.RemoveById(id);
+
         await uow.CompleteAsync();
 
         return NoContent();
