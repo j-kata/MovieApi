@@ -1,10 +1,11 @@
-﻿namespace MovieApp.Core.Entities
+﻿using MovieApp.Core.Contracts;
+
+namespace MovieApp.Core.Entities;
+
+public class Actor : IEntity
 {
-    public class Actor
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-        public int BirthYear { get; set; }
-        public ICollection<Role> Roles { get; set; } = [];
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public int BirthYear { get; set; }
+    public ICollection<Role> Roles { get; set; } = [];
 }
