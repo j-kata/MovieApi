@@ -1,107 +1,96 @@
-// using AutoMapper;
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.EntityFrameworkCore;
-// using MovieApp.Data;
-// using MovieApp.API.Extensions;
-// using MovieApp.Core.Dtos.Actor;
-// using MovieApp.Core.Entities;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using MovieApp.Core.Dtos.Actor;
+using MovieApp.Core.Entities;
+using MovieApp.Core.Contracts;
 
-// namespace MovieApp.API.Controllers
-// {
-//     /// <summary>
-//     /// Actors controller
-//     /// </summary>
-//     /// <param name="context">Context</param>
-//     /// <param name="mapper">Mapper</param>
-//     [Route("api/actors")]
-//     public class ActorsController(MovieContext context, IMapper mapper)
-//         : AppController(context, mapper)
-//     {
-//         /// <summary>
-//         /// Retrieve all actors, optionally filtered by name.
-//         /// </summary>
-//         /// <param name="name">Name of the actor</param>
-//         /// <returns>List of matching actors</returns>
-//         [HttpGet]
-//         [ProducesResponseType(StatusCodes.Status200OK)]
-//         public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
-//             [FromQuery] string? name
-//         )
-//         {
-//             IQueryable<Actor> actors = _context.Actors.AsNoTracking();
+namespace MovieApp.API.Controllers
+{
+    /// <summary>
+    /// Actors controller
+    /// </summary>
+    /// <param name="uow">UnitOfWork</param>
+    /// <param name="mapper">Mapper</param>
+    [Route("api/actors")]
+    public class ActorsController(IUnitOfWork uow, IMapper mapper)
+        : AppController(uow, mapper)
+    {
+        /// <summary>
+        /// Retrieve all actors, optionally filtered by name.
+        /// </summary>
+        /// <param name="name">Name of the actor</param>
+        /// <returns>List of matching actors</returns>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors([FromQuery] string? name)
+        {
+            var actors = await uow.Actors.GetActorsAsync(name);
+            var result = mapper.Map<IEnumerable<ActorDto>>(actors);
 
-//             if (name is not null)
-//                 actors = actors.Where(a => EF.Functions.Like(a.Name, $"%{name}%"));
+            return Ok(result);
+        }
 
-//             var result = await _mapper
-//                 .ProjectTo<ActorDto>(actors)
-//                 .ToListAsync();
+        /// <summary>
+        /// Retrieve actor by id
+        /// </summary>
+        /// <param name="id">Id of the actor</param>
+        /// <returns>Actor with the specified Id, or 404 if not found</returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ActorDto>> GetActor(int id)
+        {
+            var actor = await uow.Actors.FindByIdAsync(id);
+            if (actor == null)
+                return NotFound();
 
-//             return Ok(result);
-//         }
+            return Ok(mapper.Map<ActorDto>(actor));
+        }
 
-//         /// <summary>
-//         /// Retrieve actor by id
-//         /// </summary>
-//         /// <param name="id">Id of the actor</param>
-//         /// <returns>Actor with the specified Id, or 404 if not found</returns>
-//         [HttpGet("{id}")]
-//         [ProducesResponseType(StatusCodes.Status200OK)]
-//         [ProducesResponseType(StatusCodes.Status404NotFound)]
-//         public async Task<ActionResult<ActorDto>> GetActor(int id)
-//         {
-//             var actor = await _mapper
-//                 .ProjectTo<ActorDto>(_context.QueryById<Actor>(id))
-//                 .FirstOrDefaultAsync();
+        /// <summary>
+        /// Update actor by id
+        /// </summary>
+        /// <param name="id">Id of the actor</param>
+        /// <param name="updateDto">New values for the actor</param>
+        /// <returns>No content if successful, 404 if id not found, 400 if request not valid</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutActor(int id, ActorUpdateDto updateDto)
+        {
+            if (id != updateDto.Id)
+                return BadRequest();
 
-//             return actor is null ? NotFound() : Ok(actor);
-//         }
+            var actor = await uow.Actors.FindByIdAsync(id, true);
 
-//         /// <summary>
-//         /// Update actor by id
-//         /// </summary>
-//         /// <param name="id">Id of the actor</param>
-//         /// <param name="updateDto">New values for the actor</param>
-//         /// <returns>No content if successful, 404 if id not found, 400 if request not valid</returns>
-//         [HttpPut("{id}")]
-//         [ProducesResponseType(StatusCodes.Status204NoContent)]
-//         [ProducesResponseType(StatusCodes.Status404NotFound)]
-//         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-//         public async Task<IActionResult> PutActor(int id, ActorUpdateDto updateDto)
-//         {
-//             if (id != updateDto.Id)
-//                 return BadRequest();
+            if (actor is null)
+                return NotFound();
 
-//             var actor = await _context.Actors
-//                 .FirstOrDefaultAsync(a => a.Id == id);
+            mapper.Map(updateDto, actor);
+            await uow.CompleteAsync();
 
-//             if (actor is null)
-//                 return NotFound();
+            return NoContent();
+        }
 
-//             _mapper.Map(updateDto, actor);
-//             await _context.SaveChangesAsync();
+        /// <summary>
+        /// Create new actor
+        /// </summary>
+        /// <param name="createDto">Values for the new actor</param>
+        /// <returns>New actor if created, 400 if request not valid</returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PostActor(ActorCreateDto createDto)
+        {
+            var actor = mapper.Map<Actor>(createDto);
 
-//             return NoContent();
-//         }
+            uow.Actors.Add(actor);
+            await uow.CompleteAsync();
 
-//         /// <summary>
-//         /// Create new actor
-//         /// </summary>
-//         /// <param name="createDto">Values for the new actor</param>
-//         /// <returns>New actor if created, 400 if request not valid</returns>
-//         [HttpPost]
-//         [ProducesResponseType(StatusCodes.Status201Created)]
-//         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-//         public async Task<IActionResult> PostActor(ActorCreateDto createDto)
-//         {
-//             var actor = _mapper.Map<Actor>(createDto);
+            var actorDto = mapper.Map<ActorDto>(actor);
 
-//             _context.Actors.Add(actor);
-//             await _context.SaveChangesAsync();
-
-//             var actorDto = _mapper.Map<ActorDto>(actor);
-
-//             return CreatedAtAction("GetActor", new { id = actor.Id }, actorDto);
-//         }
-//     }
-// }
+            return CreatedAtAction("GetActor", new { id = actor.Id }, actorDto);
+        }
+    }
+}

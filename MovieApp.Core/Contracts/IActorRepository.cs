@@ -4,4 +4,5 @@ namespace MovieApp.Core.Contracts;
 
 public interface IActorRepository : IBaseRepository<Actor>
 {
+    public Task<IEnumerable<Actor>> GetActorsAsync(string? name, bool trackChanges = false);
 }
