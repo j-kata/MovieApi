@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Entities;
