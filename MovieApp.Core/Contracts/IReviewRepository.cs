@@ -2,9 +2,8 @@ using MovieApp.Core.Entities;
 
 namespace MovieApp.Core.Contracts;
 
-public interface IReviewRepository
+public interface IReviewRepository : IBaseRepository<Review>
 {
-    Task<bool> AnyAsync(int id);
-    public void Attach(Review review);
-    public void Delete(Review review);
+    public void RemoveById(int id);
+    public Task<IEnumerable<Review>> GetMovieReviewsAsync(int movieId, bool trackChanges = false);
 }

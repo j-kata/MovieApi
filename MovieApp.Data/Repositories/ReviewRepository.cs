@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.Core.Contracts;
@@ -8,8 +9,9 @@ namespace MovieApp.Data.Repositories;
 public class ReviewRepository(MovieContext context)
     : BaseRepository<Review>(context), IReviewRepository
 {
-    // public IQueryable<Review> Query(Expression<Func<Review, bool>> expression) =>
-    //     context.Reviews.Where(expression);
+
+    public async Task<IEnumerable<Review>> GetMovieReviewsAsync(int movieId, bool trackChanges = false) =>
+        await Find(r => r.MovieId == movieId, trackChanges).ToListAsync();
 
     public void RemoveById(int id)
     {
