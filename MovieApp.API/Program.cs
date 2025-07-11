@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using MovieApp.Data;
 using MovieApp.API.Extensions;
 using MovieApp.Data.Profiles;
+using MovieApp.Core.Contracts;
+using MovieApp.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddSwaggerGen(setup =>
     var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
     setup.IncludeXmlComments(xmlCommentsFullPath);
 });
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // TODO: load all at once automatically?
 builder.Services.AddAutoMapper(opt => opt.AddProfiles([

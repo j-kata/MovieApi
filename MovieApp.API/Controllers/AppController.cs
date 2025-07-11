@@ -1,21 +1,20 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MovieApp.Data;
+using MovieApp.Core.Contracts;
 
-namespace MovieApp.API.Controllers
+namespace MovieApp.API.Controllers;
+
+/// <summary>
+/// Base application controller
+/// </summary>
+/// <param name="uow">UnitOfWork</param>
+/// <param name="mapper">Mapper</param>
+[ApiController]
+[Produces("application/json")]
+public class AppController(IUnitOfWork uow, IMapper mapper) : ControllerBase
 {
-    /// <summary>
-    /// Base application controller
-    /// </summary>
-    /// <param name="context">Context</param>
-    /// <param name="mapper">Mapper</param>
-    [ApiController]
-    [Produces("application/json")]
-    public class AppController(MovieContext context, IMapper mapper) : ControllerBase
-    {
-        protected readonly MovieContext _context = context
-            ?? throw new ArgumentNullException(nameof(context));
-        protected readonly IMapper _mapper = mapper
-            ?? throw new ArgumentNullException(nameof(mapper));
-    }
+    protected readonly IUnitOfWork uow = uow
+        ?? throw new ArgumentNullException(nameof(uow));
+    protected readonly IMapper mapper = mapper
+        ?? throw new ArgumentNullException(nameof(mapper));
 }
