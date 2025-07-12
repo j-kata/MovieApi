@@ -22,7 +22,7 @@ public class MovieReviewsController(IServiceManager serviceManager) : AppControl
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId) =>
-        Ok(await reviewService.GetReviews(movieId));
+        Ok(await reviewService.GetReviewsAsync(movieId));
 
     /// <summary>
     /// Create new review of the specified movie
@@ -36,7 +36,7 @@ public class MovieReviewsController(IServiceManager serviceManager) : AppControl
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ReviewDto>> PostMovieReview(int movieId, ReviewCreateDto createDto)
     {
-        var reviewDto = await reviewService.PostReview(movieId, createDto);
+        var reviewDto = await reviewService.PostReviewAsync(movieId, createDto);
         return CreatedAtAction("GetMovieReviews", new { movieId }, reviewDto);
     }
 }

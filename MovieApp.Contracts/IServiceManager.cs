@@ -4,4 +4,5 @@ public interface IServiceManager
 {
     IReviewService ReviewService { get; }
     IRoleService RoleService { get; }
+    IActorService ActorService { get; }
 }

@@ -22,7 +22,7 @@ public class RolesController(IServiceManager serviceManager) : AppController(ser
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ActorWithRoleDto>>> GetMovieActors(int movieId) =>
-        Ok(await roleService.GetMovieActors(movieId));
+        Ok(await roleService.GetMovieActorsAsync(movieId));
 
     /// <summary>
     /// Add specified actor with role title to movie
@@ -36,11 +36,9 @@ public class RolesController(IServiceManager serviceManager) : AppController(ser
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostMovieActor(
         [FromRoute] int movieId,
-        [FromBody] RoleCreateDto createDto) =>
-
-        CreatedAtAction(
-            nameof(GetMovieActors),
-            new { movieId },
-            await roleService.PostMovieActor(movieId, createDto));
-
+        [FromBody] RoleCreateDto createDto)
+    {
+        await roleService.PostMovieActorAsync(movieId, createDto);
+        return CreatedAtAction(nameof(GetMovieActors), null);
+    }
 }

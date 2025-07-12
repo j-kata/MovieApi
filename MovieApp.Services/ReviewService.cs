@@ -8,7 +8,7 @@ namespace MovieApp.Services;
 
 public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
 {
-    public async Task<IEnumerable<ReviewDto>> GetReviews(int movieId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsAsync(int movieId)
     {
         if (!await uow.Movies.AnyByIdAsync(movieId))
             return null!; // TODO: throw exception
@@ -17,7 +17,7 @@ public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
             await uow.Reviews.GetMovieReviewsAsync(movieId));
     }
 
-    public async Task<ReviewDto> PostReview(int movieId, ReviewCreateDto createDto)
+    public async Task<ReviewDto> PostReviewAsync(int movieId, ReviewCreateDto createDto)
     {
         var movie = await uow.Movies.GetByIdAsync(movieId, trackChanges: true);
         if (movie is null)
@@ -31,7 +31,7 @@ public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
         return mapper.Map<ReviewDto>(review);
     }
 
-    public async Task DeleteReview(int id)
+    public async Task DeleteReviewAsync(int id)
     {
         if (!await uow.Reviews.AnyByIdAsync(id))
             return;// TODO: throw exception

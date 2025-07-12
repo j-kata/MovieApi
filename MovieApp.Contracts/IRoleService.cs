@@ -5,6 +5,6 @@ namespace MovieApp.Contracts;
 
 public interface IRoleService
 {
-    public Task<IEnumerable<ActorWithRoleDto>> GetMovieActors(int movieId);
-    public Task<RoleCreateDto> PostMovieActor(int movieId, RoleCreateDto createDto);
+    public Task<IEnumerable<ActorWithRoleDto>> GetMovieActorsAsync(int movieId);
+    public Task PostMovieActorAsync(int movieId, RoleCreateDto createDto);
 }

@@ -22,7 +22,7 @@ public class ReviewsController(IServiceManager serviceManager) : AppController(s
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteReview(int id)
     {
-        await reviewService.DeleteReview(id);
+        await reviewService.DeleteReviewAsync(id);
         return NoContent();
     }
 }
