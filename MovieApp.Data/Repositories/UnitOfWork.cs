@@ -19,6 +19,9 @@ public class UnitOfWork : IUnitOfWork
     private readonly Lazy<IRoleRepository> _roleRepository;
     public IRoleRepository Roles => _roleRepository.Value;
 
+    private readonly Lazy<IGenreRepository> _genreRepository;
+    public IGenreRepository Genres => _genreRepository.Value;
+
     public UnitOfWork(MovieContext context)
     {
         _context = context;
@@ -26,6 +29,7 @@ public class UnitOfWork : IUnitOfWork
         _movieRepository = new Lazy<IMovieRepository>(() => new MovieRepository(_context));
         _actorRepository = new Lazy<IActorRepository>(() => new ActorRepository(_context));
         _roleRepository = new Lazy<IRoleRepository>(() => new RoleRepository(_context));
+        _genreRepository = new Lazy<IGenreRepository>(() => new GenreRepository(_context));
     }
 
     public async Task CompleteAsync() => await _context.SaveChangesAsync();

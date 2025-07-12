@@ -1,9 +1,11 @@
-﻿namespace MovieApp.Core.Entities
+﻿using MovieApp.Core.Contracts;
+
+namespace MovieApp.Core.Entities;
+
+public class Genre : IEntity
 {
-    public class Genre
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-        public ICollection<Movie> Movies { get; set; } = [];
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public ICollection<Movie> Movies { get; set; } = [];
 }
+

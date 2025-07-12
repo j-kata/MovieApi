@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MovieApp.Data;
-using MovieApp.API.Extensions;
 using MovieApp.Core.Dtos.Movie;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Parameters;
-using System.Security.Principal;
 
 namespace MovieApp.API.Controllers
 {
@@ -48,7 +44,7 @@ namespace MovieApp.API.Controllers
             int id,
             [FromQuery] bool withActors = false)
         {
-            var movie = await uow.Movies.GetMovieAsync(id, withActors);
+            var movie = await uow.Movies.GetMovieAsync(id, includeActors: withActors);
             if (movie is null)
                 return NotFound();
 
@@ -58,97 +54,95 @@ namespace MovieApp.API.Controllers
                 : Ok(mapper.Map<MovieDto>(movie));
         }
 
-        //     /// <summary>
-        //     /// Retrieve movie by id with additional details
-        //     /// </summary>
-        //     /// <param name="id">Id of the movie</param>
-        //     /// <returns>Movie with the specified Id, or 404 if not found</returns>
-        //     [HttpGet("{id}/details")]
-        //     [ProducesResponseType(StatusCodes.Status200OK)]
-        //     [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //     public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id)
-        //     {
-        //         var movie = await _mapper
-        //             .ProjectTo<MovieDetailDto>(_context.QueryById<Movie>(id))
-        //             .FirstOrDefaultAsync();
+        /// <summary>
+        /// Retrieve movie by id with additional details
+        /// </summary>
+        /// <param name="id">Id of the movie</param>
+        /// <returns>Movie with the specified Id, or 404 if not found</returns>
+        [HttpGet("{id}/details")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id)
+        {
+            var movie = await uow.Movies.GetMovieAsync(id, includeActors: true, includeReviews: true, includeDetails: true);
+            if (movie is null)
+                return NotFound();
 
-        //         return movie is null ? NotFound() : Ok(movie);
-        //     }
+            return Ok(mapper.Map<MovieDetailDto>(movie));
+        }
 
-        //     /// <summary>
-        //     /// Update movie by id
-        //     /// </summary>
-        //     /// <param name="id">Id of the movie</param>
-        //     /// <param name="updateDto">New values for the movie</param>
-        //     /// <returns>No content if successful, 404 if movie not found, 400 if request not valid</returns>
-        //     [HttpPut("{id}")]
-        //     [ProducesResponseType(StatusCodes.Status204NoContent)]
-        //     [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //     public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateDto)
-        //     {
-        //         if (!await _context.IsPresentAsync<Genre>(updateDto.GenreId))
-        //             return BadRequest();
+        /// <summary>
+        /// Update movie by id
+        /// </summary>
+        /// <param name="id">Id of the movie</param>
+        /// <param name="updateDto">New values for the movie</param>
+        /// <returns>No content if successful, 404 if movie not found, 400 if request not valid</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateDto)
+        {
+            if (!await uow.Genres.AnyByIdAsync(updateDto.GenreId))
+                return BadRequest();
 
-        //         if (id != updateDto.Id)
-        //             return BadRequest();
+            if (id != updateDto.Id)
+                return BadRequest();
 
+            var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true, trackChanges: true);
 
-        //         var movie = await _context.Movies
-        //             .Include(m => m.MovieDetail)
-        //             .FirstOrDefaultAsync(m => m.Id == id);
+            if (movie is null)
+                return NotFound();
 
-        //         if (movie is null)
-        //             return NotFound();
+            mapper.Map(updateDto, movie);
+            await uow.CompleteAsync();
 
-        //         _mapper.Map(updateDto, movie);
-        //         await _context.SaveChangesAsync();
+            return NoContent();
+        }
 
-        //         return NoContent();
-        //     }
+        /// <summary>
+        /// Create new movie
+        /// </summary>
+        /// <param name="createDto">Values for the new movie</param>
+        /// <returns>New movie if created, 400 if request not valid</returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto createDto)
+        {
+            if (!await uow.Genres.AnyByIdAsync(createDto.GenreId))
+                return BadRequest();
 
-        //     /// <summary>
-        //     /// Create new movie
-        //     /// </summary>
-        //     /// <param name="createDto">Values for the new movie</param>
-        //     /// <returns>New movie if created, 400 if request not valid</returns>
-        //     [HttpPost]
-        //     [ProducesResponseType(StatusCodes.Status201Created)]
-        //     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //     public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto createDto)
-        //     {
-        //         if (!await _context.IsPresentAsync<Genre>(createDto.GenreId))
-        //             return BadRequest();
+            var movie = mapper.Map<Movie>(createDto);
 
-        //         var movie = _mapper.Map<Movie>(createDto);
+            uow.Movies.Add(movie);
+            await uow.CompleteAsync();
 
-        //         _context.Movies.Add(movie);
-        //         await _context.SaveChangesAsync();
-        //         await _context.Entry(movie).Reference(m => m.Genre).LoadAsync(); // load Genre to return Genre.Name in response
+            // TODO: find better solution for genres
+            //await _context.Entry(movie).Reference(m => m.Genre).LoadAsync(); // load Genre to return Genre.Name in response
 
-        //         var movieDto = _mapper.Map<MovieDto>(movie);
+            var movieDto = mapper.Map<MovieDto>(movie);
 
-        //         return CreatedAtAction("GetMovie", new { id = movieDto.Id }, movieDto);
-        //     }
+            return CreatedAtAction("GetMovie", new { id = movieDto.Id }, movieDto);
+        }
 
-        //     /// <summary>
-        //     /// Delete movie by id
-        //     /// </summary>
-        //     /// <param name="id">Id of the movie</param>
-        //     /// <returns>No content if successful, or 404 if not found</returns>
-        //     [HttpDelete("{id}")]
-        //     [ProducesResponseType(StatusCodes.Status204NoContent)]
-        //     [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //     public async Task<IActionResult> DeleteMovie(int id)
-        //     {
-        //         if (!await _context.IsPresentAsync<Movie>(id)) // no need to load the whole object
-        //             return NotFound();
+        /// <summary>
+        /// Delete movie by id
+        /// </summary>
+        /// <param name="id">Id of the movie</param>
+        /// <returns>No content if successful, or 404 if not found</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteMovie(int id)
+        {
+            if (!await uow.Movies.AnyByIdAsync(id)) // no need to load the whole object
+                return NotFound();
 
-        //         var movie = _context.AttachStubById<Movie>(id);
-        //         _context.Remove(movie);
-        //         await _context.SaveChangesAsync();
+            uow.Movies.RemoveById(id);
+            await uow.CompleteAsync();
 
-        //         return NoContent();
-        //     }
+            return NoContent();
+        }
     }
 }

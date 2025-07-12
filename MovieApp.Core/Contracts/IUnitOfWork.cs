@@ -6,5 +6,6 @@ public interface IUnitOfWork
     public IMovieRepository Movies { get; }
     public IRoleRepository Roles { get; }
     public IActorRepository Actors { get; }
+    public IGenreRepository Genres { get; }
     public Task CompleteAsync();
 }

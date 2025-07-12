@@ -18,13 +18,33 @@ public class MovieRepository(MovieContext context) : BaseRepository<Movie>(conte
             query = query.Where(m => EF.Functions.Like(m.Genre.Name, parameters.Genre));
         if (parameters?.Actor is not null)
             query = query.Where(m => m.Roles.Any(a => EF.Functions.Like(a.Actor.Name, $"%{parameters.Actor}%")));
+
         return await query.Include(m => m.Genre).ToListAsync();
     }
 
-    public Task<Movie?> GetMovieAsync(int movieId, bool includeActors, bool trackChanges = false)
+    public Task<Movie?> GetMovieAsync(
+        int id,
+        bool includeActors = false,
+        bool includeDetails = false,
+        bool includeReviews = false,
+        bool trackChanges = false)
     {
-        var query = FindBy(m => m.Id == movieId, trackChanges);
-        query = includeActors ? query.Include(m => m.Roles).ThenInclude(r => r.Actor) : query;
+        var query = FindBy(m => m.Id == id, trackChanges);
+        if (includeActors)
+            query = query.Include(m => m.Roles).ThenInclude(r => r.Actor);
+        if (includeDetails)
+            query = query.Include(m => m.MovieDetail);
+        if (includeReviews)
+            query = query.Include(m => m.Reviews);
+
         return query.Include(m => m.Genre).FirstOrDefaultAsync();
+    }
+
+    // TODO: rewrite generisk in BaseRepository
+    public void RemoveById(int id)
+    {
+        var movie = new Movie { Id = id };
+        Attach(movie);
+        Remove(movie);
     }
 }
