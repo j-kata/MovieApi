@@ -1,9 +1,8 @@
 using MovieApp.Core.Dtos.Actor;
 
-namespace MovieApp.Core.Dtos.Movie
+namespace MovieApp.Core.Dtos.Movie;
+
+public class MovieWithActorsDto : MovieDto
 {
-    public class MovieWithActorsDto : MovieDto
-    {
-        public List<ActorWithRoleDto> Actors { get; set; } = [];
-    }
+    public List<ActorWithRoleDto> Actors { get; set; } = [];
 }

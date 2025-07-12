@@ -20,4 +20,11 @@ public class MovieRepository(MovieContext context) : BaseRepository<Movie>(conte
             query = query.Where(m => m.Roles.Any(a => EF.Functions.Like(a.Actor.Name, $"%{parameters.Actor}%")));
         return await query.Include(m => m.Genre).ToListAsync();
     }
+
+    public Task<Movie?> GetMovieAsync(int movieId, bool includeActors, bool trackChanges = false)
+    {
+        var query = FindBy(m => m.Id == movieId, trackChanges);
+        query = includeActors ? query.Include(m => m.Roles).ThenInclude(r => r.Actor) : query;
+        return query.Include(m => m.Genre).FirstOrDefaultAsync();
+    }
 }

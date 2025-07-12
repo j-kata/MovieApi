@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MovieApp.Core.Dtos.Movie
+namespace MovieApp.Core.Dtos.Movie;
+
+public class MovieUpdateDto : MovieCreateDto
 {
-    public class MovieUpdateDto : MovieCreateDto
-    {
-        [Required]
-        public int Id { get; set; }
-    }
+    [Required]
+    public int Id { get; set; }
 }

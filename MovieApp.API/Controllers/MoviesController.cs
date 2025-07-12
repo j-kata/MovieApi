@@ -7,6 +7,7 @@ using MovieApp.Core.Dtos.Movie;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Parameters;
+using System.Security.Principal;
 
 namespace MovieApp.API.Controllers
 {
@@ -34,29 +35,28 @@ namespace MovieApp.API.Controllers
             return Ok(mapper.Map<IEnumerable<MovieDto>>(movies));
         }
 
-        //     /// <summary>
-        //     /// Retrieve movie by id
-        //     /// </summary>
-        //     /// <param name="id">Id of the movie</param>
-        //     /// <param name="withActors">If true, include list of actors</param>
-        //     /// <returns>Movie with the specified Id, or 404 if not found</returns>
-        //     [HttpGet("{id}")]
-        //     [ProducesResponseType(StatusCodes.Status200OK)]
-        //     [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //     public async Task<IActionResult> GetMovie(
-        //         int id,
-        //         [FromQuery] bool withActors = false)
-        //     {
-        //         if (!await _context.IsPresentAsync<Movie>(id))
-        //             return NotFound();
+        /// <summary>
+        /// Retrieve movie by id
+        /// </summary>
+        /// <param name="id">Id of the movie</param>
+        /// <param name="withActors">If true, include list of actors</param>
+        /// <returns>Movie with the specified Id, or 404 if not found</returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMovie(
+            int id,
+            [FromQuery] bool withActors = false)
+        {
+            var movie = await uow.Movies.GetMovieAsync(id, withActors);
+            if (movie is null)
+                return NotFound();
 
-        //         var movie = _context.QueryById<Movie>(id);
-
-        //         // or one dto with optional actors list?
-        //         return withActors
-        //             ? Ok(await _mapper.ProjectTo<MovieWithActorsDto>(movie).FirstOrDefaultAsync())
-        //             : Ok(await _mapper.ProjectTo<MovieDto>(movie).FirstOrDefaultAsync());
-        //     }
+            // separate so as not to have actors[] in return when actors are not included
+            return withActors
+                ? Ok(mapper.Map<MovieWithActorsDto>(movie))
+                : Ok(mapper.Map<MovieDto>(movie));
+        }
 
         //     /// <summary>
         //     /// Retrieve movie by id with additional details
