@@ -40,7 +40,7 @@ namespace MovieApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ActorDto>> GetActor(int id)
         {
-            var actor = await uow.Actors.FindByIdAsync(id);
+            var actor = await uow.Actors.GetByIdAsync(id);
             if (actor == null)
                 return NotFound();
 
@@ -62,7 +62,7 @@ namespace MovieApp.API.Controllers
             if (id != updateDto.Id)
                 return BadRequest();
 
-            var actor = await uow.Actors.FindByIdAsync(id, true);
+            var actor = await uow.Actors.GetByIdAsync(id, true);
 
             if (actor is null)
                 return NotFound();

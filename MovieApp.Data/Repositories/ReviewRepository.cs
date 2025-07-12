@@ -8,7 +8,7 @@ public class ReviewRepository(MovieContext context)
     : BaseRepository<Review>(context), IReviewRepository
 {
     public async Task<IEnumerable<Review>> GetMovieReviewsAsync(int movieId, bool trackChanges = false) =>
-        await Find(r => r.MovieId == movieId, trackChanges).ToListAsync();
+        await FindBy(r => r.MovieId == movieId, trackChanges).ToListAsync();
 
     public void RemoveById(int id)
     {

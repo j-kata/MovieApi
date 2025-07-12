@@ -45,7 +45,7 @@ public class MovieReviewsController(IUnitOfWork uow, IMapper mapper)
     public async Task<ActionResult<ReviewDto>> PostMovieReview(int movieId, ReviewCreateDto createDto)
     {
         // track to return review Id in response
-        var movie = await uow.Movies.FindByIdAsync(movieId, trackChanges: true);
+        var movie = await uow.Movies.GetByIdAsync(movieId, trackChanges: true);
         if (movie is null)
             return NotFound();
 

@@ -8,6 +8,6 @@ public class RoleRepository(MovieContext context)
     : BaseRepository<Role>(context), IRoleRepository
 {
     public async Task<IEnumerable<Role>> GetMovieRolesAsync(int movieId, bool trackChanges = false) =>
-        await Find(m => m.MovieId == movieId, trackChanges)
+        await FindBy(m => m.MovieId == movieId, trackChanges)
             .Include(r => r.Actor).ToListAsync();
 }

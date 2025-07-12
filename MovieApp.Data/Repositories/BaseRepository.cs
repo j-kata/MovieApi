@@ -16,14 +16,17 @@ public class BaseRepository<T>(MovieContext context)
     public Task<bool> AnyByIdAsync(int id) =>
         DbSet.AnyAsync(e => EF.Property<int>(e, "Id") == id); // TODO: T with id? interface?
 
-    public Task<T?> FindByIdAsync(int id, bool trackChanges = false) =>
+    public Task<T?> GetByIdAsync(int id, bool trackChanges = false) =>
         DbSet.WithTracking(trackChanges)
             .FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id); // TODO: T with id? interface?
 
-    public IQueryable<T> Find(Expression<Func<T, bool>>? predicate = null, bool trackChanges = false) =>
+    public IQueryable<T> FindBy(Expression<Func<T, bool>>? predicate = null, bool trackChanges = false) =>
         predicate is null
             ? DbSet.WithTracking(trackChanges)
             : DbSet.WithTracking(trackChanges).Where(predicate);
+
+    public IQueryable<T> FindAll(bool trackChanges = false) => // alias
+        FindBy(trackChanges: trackChanges);
 
     public void Attach(T entity) =>
         DbSet.Attach(entity);

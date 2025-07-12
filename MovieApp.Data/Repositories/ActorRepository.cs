@@ -10,8 +10,8 @@ public class ActorRepository(MovieContext context)
     public async Task<IEnumerable<Actor>> GetActorsAsync(string? name, bool trackChanges = false)
     {
         var result = name is null
-            ? Find(trackChanges: trackChanges)
-            : Find(a => EF.Functions.Like(a.Name, $"%{name}%"), trackChanges);
+            ? FindAll(trackChanges: trackChanges)
+            : FindBy(a => EF.Functions.Like(a.Name, $"%{name}%"), trackChanges);
 
         return await result.ToListAsync();
     }
