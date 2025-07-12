@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MovieApp.Data\MovieApp.Data.csproj" />
+    <ProjectReference Include="..\MovieApp.Services\MovieApp.Services.csproj" />
+    <ProjectReference Include="..\MovieApp.Contracts\MovieApp.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

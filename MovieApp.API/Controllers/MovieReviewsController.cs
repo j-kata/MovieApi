@@ -1,20 +1,18 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Core.Dtos.Review;
-using MovieApp.Core.Entities;
-using MovieApp.Core.Contracts;
+using MovieApp.Contracts;
 
 namespace MovieApp.API.Controllers;
 
 /// <summary>
 /// Movie reviews controller
 /// </summary>
-/// <param name="uow">UnitOfWork</param>
-/// <param name="mapper">Mapper</param>
+/// <param name="serviceManager">ServiceManager</param>
 [Route("api/movies/{movieId}/reviews")]
-public class MovieReviewsController(IUnitOfWork uow, IMapper mapper)
-    : AppController(uow, mapper)
+public class MovieReviewsController(IServiceManager serviceManager) : AppController(serviceManager)
 {
+    private readonly IReviewService _reviewService = serviceManager.ReviewService;
+
     /// <summary>
     /// Retrieve all reviews of a specified movie
     /// </summary>
@@ -23,14 +21,8 @@ public class MovieReviewsController(IUnitOfWork uow, IMapper mapper)
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId)
-    {
-        if (!await uow.Movies.AnyByIdAsync(movieId))
-            return NotFound();
-
-        return Ok(mapper.Map<IEnumerable<ReviewDto>>(
-            await uow.Reviews.GetMovieReviewsAsync(movieId)));
-    }
+    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId) =>
+        Ok(await _reviewService.GetReviews(movieId));
 
     /// <summary>
     /// Create new review of the specified movie
@@ -45,16 +37,7 @@ public class MovieReviewsController(IUnitOfWork uow, IMapper mapper)
     public async Task<ActionResult<ReviewDto>> PostMovieReview(int movieId, ReviewCreateDto createDto)
     {
         // track to return review Id in response
-        var movie = await uow.Movies.GetByIdAsync(movieId, trackChanges: true);
-        if (movie is null)
-            return NotFound();
-
-        var review = mapper.Map<Review>(createDto);
-        movie.Reviews.Add(review);
-
-        await uow.CompleteAsync();
-
-        var reviewDto = mapper.Map<ReviewDto>(review);
+        var reviewDto = await _reviewService.PostReview(movieId, createDto);
         return CreatedAtAction("GetMovieReviews", new { movieId }, reviewDto);
     }
 }

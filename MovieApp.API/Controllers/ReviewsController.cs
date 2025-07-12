@@ -1,19 +1,18 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MovieApp.Core.Entities;
-using MovieApp.Core.Contracts;
+using MovieApp.Contracts;
+using MovieApp.Services;
 
 namespace MovieApp.API.Controllers;
 
 /// <summary>
 /// Reviews controller
 /// </summary>
-/// <param name="uow">UnitOfWork</param>
-/// <param name="mapper">Mapper</param>
+/// <param name="serviceManager">ServiceManager</param>
 [Route("api/reviews/{id}")]
-public class ReviewsController(IUnitOfWork uow, IMapper mapper)
-    : AppController(uow, mapper)
+public class ReviewsController(IServiceManager serviceManager) : AppController(serviceManager)
 {
+    private readonly IReviewService _reviewService = serviceManager.ReviewService;
+
     /// <summary>
     /// Delete review by id
     /// </summary>
@@ -24,13 +23,7 @@ public class ReviewsController(IUnitOfWork uow, IMapper mapper)
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteReview(int id)
     {
-        if (!await uow.Reviews.AnyByIdAsync(id))
-            return NotFound();
-
-        uow.Reviews.RemoveById(id);
-
-        await uow.CompleteAsync();
-
+        await _reviewService.DeleteReview(id);
         return NoContent();
     }
 }

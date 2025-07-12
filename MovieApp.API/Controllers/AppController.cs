@@ -1,20 +1,19 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MovieApp.Contracts;
 using MovieApp.Core.Contracts;
+using MovieApp.Services;
 
 namespace MovieApp.API.Controllers;
 
 /// <summary>
 /// Base application controller
 /// </summary>
-/// <param name="uow">UnitOfWork</param>
-/// <param name="mapper">Mapper</param>
+/// <param name="serviceManager">ServiceManager</param>
 [ApiController]
 [Produces("application/json")]
-public class AppController(IUnitOfWork uow, IMapper mapper) : ControllerBase
+public class AppController(IServiceManager serviceManager) : ControllerBase
 {
-    protected readonly IUnitOfWork uow = uow
-        ?? throw new ArgumentNullException(nameof(uow));
-    protected readonly IMapper mapper = mapper
-        ?? throw new ArgumentNullException(nameof(mapper));
+    protected IServiceManager ServiceManager { get; } = serviceManager
+        ?? throw new ArgumentNullException(nameof(serviceManager));
 }

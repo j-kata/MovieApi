@@ -5,6 +5,9 @@ using MovieApp.API.Extensions;
 using MovieApp.Data.Profiles;
 using MovieApp.Core.Contracts;
 using MovieApp.Data.Repositories;
+using MovieApp.Contracts;
+using MovieApp.Core.Entities;
+using MovieApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,8 @@ builder.Services.AddSwaggerGen(setup =>
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
 // TODO: load all at once automatically?
 builder.Services.AddAutoMapper(opt => opt.AddProfiles([
