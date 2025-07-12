@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Contracts;
-using MovieApp.Services;
 
 namespace MovieApp.API.Controllers;
 
@@ -11,7 +10,7 @@ namespace MovieApp.API.Controllers;
 [Route("api/reviews/{id}")]
 public class ReviewsController(IServiceManager serviceManager) : AppController(serviceManager)
 {
-    private readonly IReviewService _reviewService = serviceManager.ReviewService;
+    private readonly IReviewService reviewService = serviceManager.ReviewService;
 
     /// <summary>
     /// Delete review by id
@@ -23,7 +22,7 @@ public class ReviewsController(IServiceManager serviceManager) : AppController(s
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteReview(int id)
     {
-        await _reviewService.DeleteReview(id);
+        await reviewService.DeleteReview(id);
         return NoContent();
     }
 }

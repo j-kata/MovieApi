@@ -1,8 +1,5 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Contracts;
-using MovieApp.Core.Contracts;
-using MovieApp.Services;
 
 namespace MovieApp.API.Controllers;
 

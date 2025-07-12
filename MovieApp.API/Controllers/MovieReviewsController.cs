@@ -11,7 +11,7 @@ namespace MovieApp.API.Controllers;
 [Route("api/movies/{movieId}/reviews")]
 public class MovieReviewsController(IServiceManager serviceManager) : AppController(serviceManager)
 {
-    private readonly IReviewService _reviewService = serviceManager.ReviewService;
+    private readonly IReviewService reviewService = serviceManager.ReviewService;
 
     /// <summary>
     /// Retrieve all reviews of a specified movie
@@ -22,7 +22,7 @@ public class MovieReviewsController(IServiceManager serviceManager) : AppControl
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId) =>
-        Ok(await _reviewService.GetReviews(movieId));
+        Ok(await reviewService.GetReviews(movieId));
 
     /// <summary>
     /// Create new review of the specified movie
@@ -36,8 +36,7 @@ public class MovieReviewsController(IServiceManager serviceManager) : AppControl
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ReviewDto>> PostMovieReview(int movieId, ReviewCreateDto createDto)
     {
-        // track to return review Id in response
-        var reviewDto = await _reviewService.PostReview(movieId, createDto);
+        var reviewDto = await reviewService.PostReview(movieId, createDto);
         return CreatedAtAction("GetMovieReviews", new { movieId }, reviewDto);
     }
 }
