@@ -1,5 +1,4 @@
 using MovieApp.Core.Dtos.Actor;
-using MovieApp.Core.Dtos.Review;
 
 namespace MovieApp.Contracts;
 
