@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MovieApp.Core.Contracts;
 
 namespace MovieApp.Core.Entities
 {
-    public class MovieDetail
+    public class MovieDetail : IHasId
     {
         public int Id { get; set; }
         public string? Synopsis { get; set; }

@@ -3,7 +3,7 @@ using MovieApp.Core.Parameters;
 
 namespace MovieApp.Core.Contracts;
 
-public interface IMovieRepository : IBaseRepository<Movie>
+public interface IMovieRepository : IBaseRepositoryWithId<Movie>
 {
     public Task<IEnumerable<Movie>> GetMoviesAsync(MovieParameters? parameters, bool trackChanges = false);
     public Task<Movie?> GetMovieAsync(
@@ -12,5 +12,4 @@ public interface IMovieRepository : IBaseRepository<Movie>
         bool includeDetails = false,
         bool includeReviews = false,
         bool trackChanges = false);
-    public void RemoveById(int id);
 }

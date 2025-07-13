@@ -2,6 +2,6 @@ using MovieApp.Core.Entities;
 
 namespace MovieApp.Core.Contracts;
 
-public interface IGenreRepository : IBaseRepository<Genre>
+public interface IGenreRepository : IBaseRepositoryWithId<Genre>
 {
 }

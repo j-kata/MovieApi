@@ -2,7 +2,7 @@
 
 namespace MovieApp.Core.Entities;
 
-public class Movie : IEntity
+public class Movie : IHasId
 {
     public int Id { get; set; }
     public string Title { get; set; } = null!;

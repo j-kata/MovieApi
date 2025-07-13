@@ -5,7 +5,7 @@ using MovieApp.Core.Entities;
 namespace MovieApp.Data.Repositories;
 
 public class ActorRepository(MovieContext context)
-    : BaseRepository<Actor>(context), IActorRepository
+    : BaseRepositoryWithId<Actor>(context), IActorRepository
 {
     public async Task<IEnumerable<Actor>> GetActorsAsync(string? name, bool trackChanges = false)
     {

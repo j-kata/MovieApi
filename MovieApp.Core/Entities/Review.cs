@@ -2,7 +2,7 @@
 
 namespace MovieApp.Core.Entities;
 
-public class Review : IEntity
+public class Review : IHasId
 {
     public int Id { get; set; }
     public string ReviewerName { get; set; } = null!;

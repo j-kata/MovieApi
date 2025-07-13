@@ -5,7 +5,7 @@ using MovieApp.Core.Parameters;
 
 namespace MovieApp.Data.Repositories;
 
-public class MovieRepository(MovieContext context) : BaseRepository<Movie>(context), IMovieRepository
+public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>(context), IMovieRepository
 {
     public async Task<IEnumerable<Movie>> GetMoviesAsync(MovieParameters? parameters, bool trackChanges = false)
     {
@@ -38,13 +38,5 @@ public class MovieRepository(MovieContext context) : BaseRepository<Movie>(conte
             query = query.Include(m => m.Reviews);
 
         return query.Include(m => m.Genre).FirstOrDefaultAsync();
-    }
-
-    // TODO: rewrite generisk in BaseRepository
-    public void RemoveById(int id)
-    {
-        var movie = new Movie { Id = id };
-        Attach(movie);
-        Remove(movie);
     }
 }

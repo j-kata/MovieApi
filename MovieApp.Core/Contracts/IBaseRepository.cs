@@ -5,9 +5,6 @@ namespace MovieApp.Core.Contracts;
 public interface IBaseRepository<T> where T : IEntity
 {
     Task<bool> AnyAsync(Expression<Func<T, bool>> expression);
-    public Task<bool> AnyByIdAsync(int id);
-
-    Task<T?> GetByIdAsync(int id, bool trackChanges = false);
     IQueryable<T> FindBy(Expression<Func<T, bool>>? expression = null, bool trackChanges = false);
     public IQueryable<T> FindAll(bool trackChanges = false);
 
