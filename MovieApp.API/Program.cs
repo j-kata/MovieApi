@@ -4,7 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSqlLite(builder.Configuration);
-builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true);
+builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
+    .AddApplicationPart(typeof(MovieApp.Presentation.AssemblyReference).Assembly);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithXml();
 

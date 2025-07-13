@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Review;
 using MovieApp.Contracts;
 
-namespace MovieApp.API.Controllers;
+namespace MovieApp.Presentation.Controllers;
 
 /// <summary>
 /// Movie reviews controller

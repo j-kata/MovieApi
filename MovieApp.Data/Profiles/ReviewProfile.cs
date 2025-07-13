@@ -2,14 +2,13 @@ using AutoMapper;
 using MovieApp.Core.Dtos.Review;
 using MovieApp.Core.Entities;
 
-namespace MovieApp.Data.Profiles
+namespace MovieApp.Data.Profiles;
+
+public class ReviewProfile : Profile
 {
-    public class ReviewProfile : Profile
+    public ReviewProfile()
     {
-        public ReviewProfile()
-        {
-            CreateMap<Review, ReviewDto>();
-            CreateMap<ReviewCreateDto, Review>();
-        }
+        CreateMap<Review, ReviewDto>();
+        CreateMap<ReviewCreateDto, Review>();
     }
 }

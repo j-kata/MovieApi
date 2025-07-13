@@ -2,37 +2,36 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MovieApp.Core.Entities;
 
-namespace MovieApp.Data.Configurations
+namespace MovieApp.Data.Configurations;
+
+public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 {
-    public class ReviewConfiguration : IEntityTypeConfiguration<Review>
+    public void Configure(EntityTypeBuilder<Review> builder)
     {
-        public void Configure(EntityTypeBuilder<Review> builder)
-        {
-            builder.ToTable("Reviews");
+        builder.ToTable("Reviews");
 
-            builder.HasKey(r => r.Id);
+        builder.HasKey(r => r.Id);
 
-            builder.Property(r => r.ReviewerName)
-                .HasMaxLength(100)
-                .IsRequired();
+        builder.Property(r => r.ReviewerName)
+            .HasMaxLength(100)
+            .IsRequired();
 
-            builder.Property(r => r.Comment)
-                .HasMaxLength(1500)
-                .IsRequired();
+        builder.Property(r => r.Comment)
+            .HasMaxLength(1500)
+            .IsRequired();
 
-            builder.Property(r => r.Rating)
-                .IsRequired();
+        builder.Property(r => r.Rating)
+            .IsRequired();
 
-            builder.Property(r => r.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .IsRequired();
+        builder.Property(r => r.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .IsRequired();
 
-            builder.HasIndex(r => r.MovieId);
+        builder.HasIndex(r => r.MovieId);
 
-            builder.HasOne(r => r.Movie)
-                .WithMany(m => m.Reviews)
-                .HasForeignKey(r => r.MovieId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
+        builder.HasOne(r => r.Movie)
+            .WithMany(m => m.Reviews)
+            .HasForeignKey(r => r.MovieId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -5,7 +5,7 @@
 // using MovieApp.Core.Dtos.Reports;
 // using MovieApp.Core.Contracts;
 
-// namespace MovieApp.API.Controllers;
+// namespace MovieApp.Presentation.Controllers;
 
 // /// <summary>
 // /// Reports controller

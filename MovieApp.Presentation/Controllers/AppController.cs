@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Contracts;
 
-namespace MovieApp.API.Controllers;
+namespace MovieApp.Presentation.Controllers;
 
 /// <summary>
 /// Base application controller

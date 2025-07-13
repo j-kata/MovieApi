@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Movie;
-using MovieApp.Core.Entities;
-using MovieApp.Core.Contracts;
 using MovieApp.Core.Parameters;
 using MovieApp.Contracts;
 
-namespace MovieApp.API.Controllers;
+namespace MovieApp.Presentation.Controllers;
 
 /// <summary>
 /// Movies controller

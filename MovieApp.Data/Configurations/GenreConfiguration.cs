@@ -2,22 +2,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MovieApp.Core.Entities;
 
-namespace MovieApp.Data.Configurations
+namespace MovieApp.Data.Configurations;
+
+public class GenreConfiguration : IEntityTypeConfiguration<Genre>
 {
-    public class GenreConfiguration : IEntityTypeConfiguration<Genre>
+    public void Configure(EntityTypeBuilder<Genre> builder)
     {
-        public void Configure(EntityTypeBuilder<Genre> builder)
-        {
-            builder.ToTable("Genres");
+        builder.ToTable("Genres");
 
-            builder.HasKey(g => g.Id);
+        builder.HasKey(g => g.Id);
 
-            builder.Property(g => g.Name)
-                .HasMaxLength(50)
-                .IsRequired();
+        builder.Property(g => g.Name)
+            .HasMaxLength(50)
+            .IsRequired();
 
-            builder.HasIndex(g => g.Name)
-                .IsUnique();
-        }
+        builder.HasIndex(g => g.Name)
+            .IsUnique();
     }
 }

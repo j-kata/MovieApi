@@ -19,5 +19,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MovieApp.Core\MovieApp.Core.csproj" />
   </ItemGroup>
-
+  
 </Project>

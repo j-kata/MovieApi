@@ -16,13 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MovieApp.Data\MovieApp.Data.csproj" />
     <ProjectReference Include="..\MovieApp.Services\MovieApp.Services.csproj" />
-    <ProjectReference Include="..\MovieApp.Contracts\MovieApp.Contracts.csproj" />
+    <ProjectReference Include="..\MovieApp.Presentation\MovieApp.Presentation.csproj" />
   </ItemGroup>
 
 </Project>
+
