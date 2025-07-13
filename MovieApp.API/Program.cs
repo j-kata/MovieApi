@@ -1,40 +1,17 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using MovieApp.Data;
 using MovieApp.API.Extensions;
-using MovieApp.Data.Profiles;
-using MovieApp.Core.Contracts;
-using MovieApp.Data.Repositories;
-using MovieApp.Contracts;
-using MovieApp.Core.Entities;
-using MovieApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<MovieContext>(dbContextOptions =>
-    dbContextOptions.UseSqlite(builder.Configuration.GetConnectionString("MovieContext")
-    ?? throw new InvalidOperationException("Connection string 'MovieContext' not found")));
+builder.Services.AddSqlLite(builder.Configuration);
 builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(setup =>
-{
-    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
-    setup.IncludeXmlComments(xmlCommentsFullPath);
-});
+builder.Services.AddSwaggerWithXml();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IReviewService, ReviewService>();
-builder.Services.AddScoped<IServiceManager, ServiceManager>();
+builder.Services.AddApiServices();
+builder.Services.AddApiRepositories();
 
-// TODO: load all at once automatically?
-builder.Services.AddAutoMapper(opt => opt.AddProfiles([
-    new MovieProfile(),
-    new ReviewProfile(),
-    new ActorProfile(),
-    new RoleProfile()
-]));
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies()));
 
 var app = builder.Build();
 
