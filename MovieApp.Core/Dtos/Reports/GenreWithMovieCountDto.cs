@@ -1,8 +1,7 @@
-namespace MovieApp.Core.Dtos.Reports
+namespace MovieApp.Core.Dtos.Reports;
+
+public class GenreWithMovieCountDto
 {
-    public class GenreWithMovieCountDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public int MoviesCount { get; set; }
-    }
+    public string Name { get; set; } = string.Empty;
+    public int MoviesCount { get; set; }
 }

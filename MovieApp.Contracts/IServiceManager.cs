@@ -6,4 +6,5 @@ public interface IServiceManager
     IRoleService RoleService { get; }
     IActorService ActorService { get; }
     IMovieService MovieService { get; }
+    IGenreService GenreService { get; }
 }

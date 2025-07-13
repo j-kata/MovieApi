@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Actor;
-using MovieApp.Core.Dtos.Movie;
+using MovieApp.Core.Dtos.Role;
 using MovieApp.Contracts;
 
 namespace MovieApp.Presentation.Controllers;
@@ -19,7 +19,7 @@ public class RolesController(IServiceManager serviceManager) : AppController(ser
     /// </summary>
     /// <param name="movieId">Id of the movie</param>
     /// <returns>List of matching actors, or 404 if movie not found</returns>
-    [HttpGet]
+    [HttpGet(Name = "GetMovieActors")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ActorWithRoleDto>>> GetMovieActors(int movieId) =>
@@ -40,6 +40,6 @@ public class RolesController(IServiceManager serviceManager) : AppController(ser
         [FromBody] RoleCreateDto createDto)
     {
         await roleService.PostMovieActorAsync(movieId, createDto);
-        return CreatedAtAction(nameof(GetMovieActors), null);
+        return CreatedAtAction(nameof(GetMovieActors), new { movieId }, null);
     }
 }

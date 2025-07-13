@@ -1,5 +1,5 @@
 using MovieApp.Core.Dtos.Actor;
-using MovieApp.Core.Dtos.Movie;
+using MovieApp.Core.Dtos.Role;
 
 namespace MovieApp.Contracts;
 

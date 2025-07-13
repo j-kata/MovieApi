@@ -2,7 +2,7 @@ using AutoMapper;
 using MovieApp.Contracts;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Dtos.Actor;
-using MovieApp.Core.Dtos.Movie;
+using MovieApp.Core.Dtos.Role;
 using MovieApp.Core.Entities;
 
 namespace MovieApp.Services;

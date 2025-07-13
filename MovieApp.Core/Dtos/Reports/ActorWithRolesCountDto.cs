@@ -1,9 +1,8 @@
-namespace MovieApp.Core.Dtos.Reports
+namespace MovieApp.Core.Dtos.Reports;
+
+public class ActorWithRolesCountDto
 {
-    public class ActorWithRolesCountDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public int RolesCount { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int RolesCount { get; set; }
 }
