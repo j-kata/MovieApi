@@ -34,11 +34,13 @@ public static class ServiceExtensions
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IActorService, ActorService>();
         services.AddScoped<IMovieService, MovieService>();
+        services.AddScoped<IGenreService, GenreService>();
 
         services.AddLazyService<IReviewService>();
         services.AddLazyService<IRoleService>();
         services.AddLazyService<IActorService>();
         services.AddLazyService<IMovieService>();
+        services.AddLazyService<IGenreService>();
     }
 
     public static void AddApiRepositories(this IServiceCollection services)

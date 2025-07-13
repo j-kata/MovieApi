@@ -9,7 +9,7 @@ public class MovieProfile : Profile
     public MovieProfile()
     {
         CreateMap<Movie, MovieDto>()
-            .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.Name))
+            // .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.Name))
             .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.ToString(@"hh\:mm")));
 
         CreateMap<Movie, MovieDetailDto>()

@@ -19,7 +19,7 @@ public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>
         if (parameters?.Actor is not null)
             query = query.Where(m => m.Roles.Any(a => EF.Functions.Like(a.Actor.Name, $"%{parameters.Actor}%")));
 
-        return await query.Include(m => m.Genre).ToListAsync();
+        return await query.ToListAsync();
     }
 
     public Task<Movie?> GetMovieAsync(
@@ -37,6 +37,6 @@ public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>
         if (includeReviews)
             query = query.Include(m => m.Reviews);
 
-        return query.Include(m => m.Genre).FirstOrDefaultAsync();
+        return query.FirstOrDefaultAsync();
     }
 }

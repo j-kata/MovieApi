@@ -6,5 +6,5 @@ public class MovieDto
     public string Title { get; set; } = string.Empty;
     public int Year { get; set; }
     public string Duration { get; set; } = string.Empty;
-    public string Genre { get; set; } = string.Empty;
+    public int GenreId { get; set; }
 }
