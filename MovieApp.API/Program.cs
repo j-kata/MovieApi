@@ -1,11 +1,13 @@
 using MovieApp.API.Extensions;
+using MovieApp.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSqlLite(builder.Configuration);
 builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
-    .AddApplicationPart(typeof(MovieApp.Presentation.AssemblyReference).Assembly);
+    .AddApplicationPart(typeof(AssemblyReference).Assembly)
+    .AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithXml();
 

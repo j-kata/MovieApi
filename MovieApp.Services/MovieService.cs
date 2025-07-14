@@ -27,7 +27,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
             : mapper.Map<MovieDto>(movie);
     }
 
-    public async Task<MovieDetailDto> GetMovieDetailsAsync(int id)
+    public async Task<MovieDetailDto> GetMovieDetailedAsync(int id)
     {
         var movie = await uow.Movies.GetMovieAsync(id, includeActors: true, includeReviews: true, includeDetails: true);
         if (movie is null)
@@ -36,7 +36,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         return mapper.Map<MovieDetailDto>(movie);
     }
 
-    public async Task PutMovieAsync(int id, MovieUpdateDto updateDto)
+    public async Task UpdateMovieAsync(int id, MovieUpdateDto updateDto)
     {
         if (!await uow.Genres.AnyByIdAsync(updateDto.GenreId))
             return; // TODO: throw exception
@@ -53,6 +53,15 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         await uow.CompleteAsync();
     }
 
+    public async Task<MovieUpdateDto> GetMovieForPatchAsync(int id)
+    {
+        var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true);
+        if (movie is null)
+            return null!; // TODO: throw exception
+
+        return mapper.Map<MovieUpdateDto>(movie);
+    }
+
     public async Task<MovieDto> PostMovieAsync(MovieCreateDto createDto)
     {
         if (!await uow.Genres.AnyByIdAsync(createDto.GenreId))
@@ -62,9 +71,6 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
         uow.Movies.Add(movie);
         await uow.CompleteAsync();
-
-        // TODO: find better solution for genres
-        //await _context.Entry(movie).Reference(m => m.Genre).LoadAsync(); // load Genre to return Genre.Name in response
 
         return mapper.Map<MovieDto>(movie);
     }

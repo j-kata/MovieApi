@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Movie;
 using MovieApp.Core.Parameters;
 using MovieApp.Contracts;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MovieApp.Presentation.Controllers;
 
@@ -49,7 +50,7 @@ public class MoviesController(IServiceManager serviceManager) : AppController(se
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<MovieDetailDto>> GetMovieDetails(int id) =>
-        Ok(await movieService.GetMovieDetailsAsync(id));
+        Ok(await movieService.GetMovieDetailedAsync(id));
 
     /// <summary>
     /// Update movie by id
@@ -63,7 +64,30 @@ public class MoviesController(IServiceManager serviceManager) : AppController(se
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateDto)
     {
-        await movieService.PutMovieAsync(id, updateDto);
+        await movieService.UpdateMovieAsync(id, updateDto);
+        return NoContent();
+    }
+    /// <summary>
+    /// Partially update movie by id
+    /// </summary>
+    /// <param name="id">Id of the movie</param>
+    /// <param name="patchDocument">Patch document</param>
+    /// <returns>No content if successful, 404 if movie not found, 400 if request not valid, 422 if entity is unprocessable</returns>
+    [HttpPatch("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> PatchMovie(int id, JsonPatchDocument<MovieUpdateDto> patchDocument)
+    {
+        var updateDto = await movieService.GetMovieForPatchAsync(id);
+        patchDocument.ApplyTo(updateDto, ModelState);
+        TryValidateModel(updateDto);
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState); // TODO: throw exception
+
+        await movieService.UpdateMovieAsync(id, updateDto);
         return NoContent();
     }
 

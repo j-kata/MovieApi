@@ -29,6 +29,11 @@ public class MovieProfile : Profile
         CreateMap<MovieUpdateDto, Movie>()
             .IncludeBase<MovieCreateDto, Movie>();
 
+        CreateMap<Movie, MovieUpdateDto>()
+            .ForMember(dest => dest.Synopsis, opt => opt.MapFrom(src => src.MovieDetail.Synopsis))
+            .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetail.Language))
+            .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetail.Budget));
+
         CreateMap<Movie, MovieWithActorsDto>()
             .IncludeBase<Movie, MovieDto>()
             .ForMember(dest => dest.Actors, opt => opt.MapFrom(src => src.Roles));
