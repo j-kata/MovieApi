@@ -8,7 +8,8 @@ public class UnitOfWork(
         Lazy<IMovieRepository> movieRepository,
         Lazy<IActorRepository> actorRepository,
         Lazy<IRoleRepository> roleRepository,
-        Lazy<IGenreRepository> genreRepository
+        Lazy<IGenreRepository> genreRepository,
+        Lazy<IReportRepository> reportRepository
     ) : IUnitOfWork
 {
     public IReviewRepository Reviews => reviewRepository.Value;
@@ -16,6 +17,7 @@ public class UnitOfWork(
     public IActorRepository Actors => actorRepository.Value;
     public IRoleRepository Roles => roleRepository.Value;
     public IGenreRepository Genres => genreRepository.Value;
+    public IReportRepository Reports => reportRepository.Value;
 
     public async Task CompleteAsync() => await context.SaveChangesAsync();
 }

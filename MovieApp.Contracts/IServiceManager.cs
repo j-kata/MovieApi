@@ -7,4 +7,5 @@ public interface IServiceManager
     IActorService ActorService { get; }
     IMovieService MovieService { get; }
     IGenreService GenreService { get; }
+    IReportService ReportService { get; }
 }

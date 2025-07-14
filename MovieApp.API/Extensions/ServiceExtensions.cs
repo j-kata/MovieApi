@@ -35,12 +35,14 @@ public static class ServiceExtensions
         services.AddScoped<IActorService, ActorService>();
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IGenreService, GenreService>();
+        services.AddScoped<IReportService, ReportService>();
 
         services.AddLazyService<IReviewService>();
         services.AddLazyService<IRoleService>();
         services.AddLazyService<IActorService>();
         services.AddLazyService<IMovieService>();
         services.AddLazyService<IGenreService>();
+        services.AddLazyService<IReportService>();
     }
 
     public static void AddApiRepositories(this IServiceCollection services)
@@ -51,12 +53,14 @@ public static class ServiceExtensions
         services.AddScoped<IActorRepository, ActorRepository>();
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
 
         services.AddLazyService<IReviewRepository>();
         services.AddLazyService<IRoleRepository>();
         services.AddLazyService<IActorRepository>();
         services.AddLazyService<IMovieRepository>();
         services.AddLazyService<IGenreRepository>();
+        services.AddLazyService<IReportRepository>();
     }
 
     public static void AddLazyService<T>(this IServiceCollection services) where T : class =>

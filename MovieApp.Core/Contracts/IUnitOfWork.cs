@@ -7,5 +7,6 @@ public interface IUnitOfWork
     public IRoleRepository Roles { get; }
     public IActorRepository Actors { get; }
     public IGenreRepository Genres { get; }
+    public IReportRepository Reports { get; }
     public Task CompleteAsync();
 }
