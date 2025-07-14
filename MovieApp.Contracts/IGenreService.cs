@@ -4,5 +4,5 @@ namespace MovieApp.Contracts;
 
 public interface IGenreService
 {
-    public Task<IEnumerable<GenreDto>> GetGenresAsync(bool trackChanges = false);
+    public Task<IEnumerable<GenreDto>> GetGenresAsync();
 }
