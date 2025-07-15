@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Contracts;
+using MovieApp.Core.Parameters;
+using MovieApp.Presentation.Extensions;
 
 namespace MovieApp.Presentation.Controllers;
 
@@ -21,8 +23,15 @@ public class ActorsController(IServiceManager serviceManager) : AppController(se
     /// <returns>List of matching actors</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors([FromQuery] string? name) =>
-        Ok(await actorService.GetActorsAsync(name));
+    public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
+        [FromQuery] string? name,
+        [FromQuery] PageParameters parameters)
+    {
+        var result = await actorService.GetActorsAsync(parameters, name);
+
+        this.IncludePaginationMeta(result.Meta);
+        return Ok(result.Items);
+    }
 
     /// <summary>
     /// Retrieve actor by id

@@ -3,15 +3,23 @@ using MovieApp.Contracts;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Core.Entities;
+using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 
 namespace MovieApp.Services;
 
 public class ActorService(IUnitOfWork uow, IMapper mapper) : IActorService
 {
-    public async Task<IEnumerable<ActorDto>> GetActorsAsync(string? name)
+    public async Task<PagedResult<ActorDto>> GetActorsAsync(PageParameters parameters, string? name)
     {
-        var actors = await uow.Actors.GetActorsAsync(name);
-        return mapper.Map<IEnumerable<ActorDto>>(actors);
+        var actors = await uow.Actors.GetActorsAsync(parameters, name);
+
+        return new PagedResult<ActorDto>(
+            items: mapper.Map<IEnumerable<ActorDto>>(actors),
+            pageIndex: parameters.PageIndex,
+            pageSize: parameters.PageSize,
+            totalCount: await uow.Actors.CountAsync()
+        );
     }
 
     public async Task<ActorDto> GetActorAsync(int id)

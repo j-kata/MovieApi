@@ -21,6 +21,9 @@ public class BaseRepository<T>(MovieContext context)
     public IQueryable<T> FindAll(bool trackChanges = false) => // alias
         FindBy(trackChanges: trackChanges);
 
+    public Task<int> CountAsync() =>
+        DbSet.CountAsync();
+
     public void Attach(T entity) =>
         DbSet.Attach(entity);
 
