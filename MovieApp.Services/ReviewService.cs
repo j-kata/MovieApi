@@ -3,18 +3,24 @@ using MovieApp.Contracts;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Dtos.Review;
 using MovieApp.Core.Entities;
+using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 
 namespace MovieApp.Services;
 
 public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
 {
-    public async Task<IEnumerable<ReviewDto>> GetReviewsAsync(int movieId)
+    public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int movieId, PageParameters parameters)
     {
         if (!await uow.Movies.AnyByIdAsync(movieId))
             return null!; // TODO: throw exception
 
-        return mapper.Map<IEnumerable<ReviewDto>>(
-            await uow.Reviews.GetMovieReviewsAsync(movieId));
+        var result = await uow.Reviews.GetMovieReviewsAsync(movieId, parameters);
+
+        return new PagedResult<ReviewDto>(
+            items: mapper.Map<IEnumerable<ReviewDto>>(result.Items),
+            details: result.Details
+        );
     }
 
     public async Task<ReviewDto> PostReviewAsync(int movieId, ReviewCreateDto createDto)

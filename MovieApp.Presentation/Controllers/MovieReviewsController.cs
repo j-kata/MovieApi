@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Review;
 using MovieApp.Contracts;
+using MovieApp.Presentation.Extensions;
+using MovieApp.Core.Parameters;
 
 namespace MovieApp.Presentation.Controllers;
 
@@ -22,9 +24,15 @@ public class MovieReviewsController(IServiceManager serviceManager) : AppControl
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(int movieId) =>
-        Ok(await reviewService.GetReviewsAsync(movieId));
-
+    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetMovieReviews(
+        int movieId,
+        [FromQuery] PageParameters parameters
+    )
+    {
+        var result = await reviewService.GetReviewsAsync(movieId, parameters);
+        this.IncludePaginationMeta(result.Details);
+        return Ok(result.Items);
+    }
     /// <summary>
     /// Create new review of the specified movie
     /// </summary>

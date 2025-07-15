@@ -5,7 +5,6 @@ using MovieApp.Core.Parameters;
 using MovieApp.Contracts;
 using Microsoft.AspNetCore.JsonPatch;
 using MovieApp.Presentation.Extensions;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace MovieApp.Presentation.Controllers;
 
