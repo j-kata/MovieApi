@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 using MovieApp.Data.Extensions;
 
 namespace MovieApp.Data.Repositories;
@@ -9,12 +10,17 @@ namespace MovieApp.Data.Repositories;
 public class ActorRepository(MovieContext context)
     : BaseRepositoryWithId<Actor>(context), IActorRepository
 {
-    public async Task<IEnumerable<Actor>> GetActorsAsync(PageParameters parameters, string? name, bool trackChanges = false)
+    public async Task<PagedResult<Actor>> GetActorsAsync(PageParameters parameters, string? name, bool trackChanges = false)
     {
-        var result = name is null
+        var query = name is null
             ? FindAll(trackChanges: trackChanges)
             : FindBy(a => EF.Functions.Like(a.Name, $"%{name}%"), trackChanges);
 
-        return await result.WithOffset(parameters.PageSize, parameters.PageIndex).ToListAsync();
+        return new PagedResult<Actor>(
+            items: await query.WithOffset(parameters.PageSize, parameters.PageIndex).ToListAsync(),
+            pageIndex: parameters.PageIndex,
+            pageSize: parameters.PageSize,
+            totalCount: await query.CountAsync()
+        );
     }
 }

@@ -12,13 +12,11 @@ public class ActorService(IUnitOfWork uow, IMapper mapper) : IActorService
 {
     public async Task<PagedResult<ActorDto>> GetActorsAsync(PageParameters parameters, string? name)
     {
-        var actors = await uow.Actors.GetActorsAsync(parameters, name);
+        var result = await uow.Actors.GetActorsAsync(parameters, name);
 
         return new PagedResult<ActorDto>(
-            items: mapper.Map<IEnumerable<ActorDto>>(actors),
-            pageIndex: parameters.PageIndex,
-            pageSize: parameters.PageSize,
-            totalCount: await uow.Actors.CountAsync()
+            items: mapper.Map<IEnumerable<ActorDto>>(result.Items),
+            details: result.Details
         );
     }
 

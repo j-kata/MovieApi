@@ -5,10 +5,10 @@ public class PagedResult<T>
     public IEnumerable<T> Items { get; set; } = [];
     public PaginationMeta Details { get; set; }
 
-    public PagedResult(IEnumerable<T> items, PaginationMeta meta)
+    public PagedResult(IEnumerable<T> items, PaginationMeta details)
     {
         Items = items;
-        Details = meta;
+        Details = details;
     }
 
     public PagedResult(IEnumerable<T> items, int totalCount, int pageIndex, int pageSize)

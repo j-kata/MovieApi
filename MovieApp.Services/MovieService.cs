@@ -15,7 +15,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         var result = await uow.Movies.GetMoviesAsync(parameters);
         return new PagedResult<MovieDto>(
             items: mapper.Map<IEnumerable<MovieDto>>(result.Items),
-            meta: result.Details
+            details: result.Details
         );
     }
 
