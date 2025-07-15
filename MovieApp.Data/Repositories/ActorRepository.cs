@@ -10,17 +10,15 @@ namespace MovieApp.Data.Repositories;
 public class ActorRepository(MovieContext context)
     : BaseRepositoryWithId<Actor>(context), IActorRepository
 {
-    public async Task<PagedResult<Actor>> GetActorsAsync(PageParameters parameters, string? name, bool trackChanges = false)
+    public async Task<PagedResult<Actor>> GetActorsAsync(
+        PageParameters parameters,
+        string? name,
+        bool trackChanges = false)
     {
         var query = name is null
             ? FindAll(trackChanges: trackChanges)
             : FindBy(a => EF.Functions.Like(a.Name, $"%{name}%"), trackChanges);
 
-        return new PagedResult<Actor>(
-            items: await query.WithOffset(parameters.PageSize, parameters.PageIndex).ToListAsync(),
-            pageIndex: parameters.PageIndex,
-            pageSize: parameters.PageSize,
-            totalCount: await query.CountAsync()
-        );
+        return await query.ToPagedResultAsync(parameters.PageSize, parameters.PageIndex);
     }
 }

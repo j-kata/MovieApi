@@ -15,7 +15,7 @@ public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
         if (!await uow.Movies.AnyByIdAsync(movieId))
             return null!; // TODO: throw exception
 
-        var result = await uow.Reviews.GetMovieReviewsAsync(movieId, parameters);
+        var result = await uow.Reviews.GetMovieReviewsAsync(parameters, movieId);
 
         return new PagedResult<ReviewDto>(
             items: mapper.Map<IEnumerable<ReviewDto>>(result.Items),

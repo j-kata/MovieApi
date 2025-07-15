@@ -7,5 +7,8 @@ namespace MovieApp.Core.Contracts;
 public interface IReviewRepository : IBaseRepositoryWithId<Review>
 {
     public Task<PagedResult<Review>> GetMovieReviewsAsync(
-        int movieId, PageParameters parameters, bool newestFirst = true, bool trackChanges = false);
+        PageParameters parameters,
+        int movieId,
+        bool newestFirst = true,
+        bool trackChanges = false);
 }

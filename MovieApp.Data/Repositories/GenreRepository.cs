@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Parameters;
@@ -13,12 +12,6 @@ public class GenreRepository(MovieContext context)
     public async Task<PagedResult<Genre>> GetGenresAsync(PageParameters parameters, bool trackChanges = false)
     {
         var query = FindAll(trackChanges: trackChanges);
-
-        return new PagedResult<Genre>(
-            items: await query.WithOffset(parameters.PageSize, parameters.PageIndex).ToListAsync(),
-            pageIndex: parameters.PageIndex,
-            pageSize: parameters.PageSize,
-            totalCount: await query.CountAsync()
-        );
+        return await query.ToPagedResultAsync(parameters.PageSize, parameters.PageIndex);
     }
 }

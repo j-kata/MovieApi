@@ -9,7 +9,9 @@ namespace MovieApp.Data.Repositories;
 
 public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>(context), IMovieRepository
 {
-    public async Task<PagedResult<Movie>> GetMoviesAsync(MovieParameters parameters, bool trackChanges = false)
+    public async Task<PagedResult<Movie>> GetMoviesAsync(
+        MovieParameters parameters,
+        bool trackChanges = false)
     {
         var query = FindAll(trackChanges: trackChanges);
         if (parameters.Title is not null)
@@ -21,12 +23,7 @@ public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>
         if (parameters.Actor is not null)
             query = query.Where(m => m.Roles.Any(a => EF.Functions.Like(a.Actor.Name, $"%{parameters.Actor}%")));
 
-        return new PagedResult<Movie>(
-            items: await query.WithOffset(parameters.PageSize, parameters.PageIndex).ToListAsync(),
-            pageIndex: parameters.PageIndex,
-            pageSize: parameters.PageSize,
-            totalCount: await query.CountAsync()
-        );
+        return await query.ToPagedResultAsync(parameters.PageSize, parameters.PageIndex);
     }
 
     public Task<Movie?> GetMovieAsync(

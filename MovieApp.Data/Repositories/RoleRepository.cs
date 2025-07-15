@@ -12,13 +12,7 @@ public class RoleRepository(MovieContext context)
 {
     public async Task<PagedResult<Role>> GetMovieRolesAsync(PageParameters parameters, int movieId, bool trackChanges = false)
     {
-        var query = FindBy(m => m.MovieId == movieId, trackChanges);
-
-        return new PagedResult<Role>(
-            items: await query.WithOffset(parameters.PageSize, parameters.PageIndex).Include(r => r.Actor).ToListAsync(),
-            pageIndex: parameters.PageIndex,
-            pageSize: parameters.PageSize,
-            totalCount: await query.CountAsync()
-        );
+        var query = FindBy(m => m.MovieId == movieId, trackChanges).Include(r => r.Actor);
+        return await query.ToPagedResultAsync(parameters.PageSize, parameters.PageIndex);
     }
 }

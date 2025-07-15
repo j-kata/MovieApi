@@ -6,7 +6,7 @@ using MovieApp.Data.Extensions;
 namespace MovieApp.Data.Repositories;
 
 public class BaseRepository<T>(MovieContext context)
-    : IBaseRepository<T> where T : class, IEntity
+    : IBaseRepository<T>, IQueryableRepository<T> where T : class, IEntity
 {
     protected DbSet<T> DbSet { get; } = context.Set<T>();
 
@@ -20,9 +20,6 @@ public class BaseRepository<T>(MovieContext context)
 
     public IQueryable<T> FindAll(bool trackChanges = false) => // alias
         FindBy(trackChanges: trackChanges);
-
-    public Task<int> CountAsync() =>
-        DbSet.CountAsync();
 
     public void Attach(T entity) =>
         DbSet.Attach(entity);
