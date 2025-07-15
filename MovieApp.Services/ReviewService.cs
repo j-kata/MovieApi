@@ -5,6 +5,7 @@ using MovieApp.Core.Dtos.Review;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Parameters;
 using MovieApp.Core.Shared;
+using MovieApp.Services.Extensions;
 
 namespace MovieApp.Services;
 
@@ -16,11 +17,7 @@ public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
             return null!; // TODO: throw exception
 
         var result = await uow.Reviews.GetMovieReviewsAsync(parameters, movieId);
-
-        return new PagedResult<ReviewDto>(
-            items: mapper.Map<IEnumerable<ReviewDto>>(result.Items),
-            details: result.Details
-        );
+        return result.Map<Review, ReviewDto>(mapper);
     }
 
     public async Task<ReviewDto> PostReviewAsync(int movieId, ReviewCreateDto createDto)

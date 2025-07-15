@@ -6,6 +6,7 @@ using MovieApp.Core.Dtos.Role;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Parameters;
 using MovieApp.Core.Shared;
+using MovieApp.Services.Extensions;
 
 namespace MovieApp.Services;
 
@@ -17,11 +18,7 @@ public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
             return null!; // TODO: throw exception
 
         var result = await uow.Roles.GetMovieRolesAsync(parameters, movieId);
-
-        return new PagedResult<ActorWithRoleDto>(
-            items: mapper.Map<IEnumerable<ActorWithRoleDto>>(result.Items),
-            details: result.Details
-        ); ;
+        return result.Map<Role, ActorWithRoleDto>(mapper);
     }
 
     public async Task PostMovieActorAsync(int movieId, RoleCreateDto createDto)

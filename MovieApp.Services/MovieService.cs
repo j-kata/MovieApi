@@ -5,6 +5,7 @@ using MovieApp.Core.Dtos.Movie;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Parameters;
 using MovieApp.Core.Shared;
+using MovieApp.Services.Extensions;
 
 namespace MovieApp.Services;
 
@@ -13,10 +14,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
     public async Task<PagedResult<MovieDto>> GetMoviesAsync(MovieParameters parameters)
     {
         var result = await uow.Movies.GetMoviesAsync(parameters);
-        return new PagedResult<MovieDto>(
-            items: mapper.Map<IEnumerable<MovieDto>>(result.Items),
-            details: result.Details
-        );
+        return result.Map<Movie, MovieDto>(mapper);
     }
 
     public async Task<MovieDto> GetMovieAsync(int id, bool withActors = false)
