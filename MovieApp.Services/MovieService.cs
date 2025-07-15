@@ -6,6 +6,7 @@ using MovieApp.Core.Entities;
 using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 using MovieApp.Services.Extensions;
+using MovieApp.Core.Exceptions;
 
 namespace MovieApp.Services;
 
@@ -19,9 +20,8 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
     public async Task<MovieDto> GetMovieAsync(int id, bool withActors = false)
     {
-        var movie = await uow.Movies.GetMovieAsync(id, includeActors: withActors);
-        if (movie is null)
-            return null!; // TODO: throw exception
+        var movie = await uow.Movies.GetMovieAsync(id, includeActors: withActors)
+            ?? throw new NotFoundException<Movie>(id);
 
         // TODO: replace with general one?
         return withActors
@@ -31,9 +31,9 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
     public async Task<MovieDetailDto> GetMovieDetailedAsync(int id)
     {
-        var movie = await uow.Movies.GetMovieAsync(id, includeActors: true, includeReviews: true, includeDetails: true);
-        if (movie is null)
-            return null!; // TODO: throw exception
+        var movie = await uow.Movies
+            .GetMovieAsync(id, includeActors: true, includeReviews: true, includeDetails: true)
+            ?? throw new NotFoundException<Movie>(id);
 
         return mapper.Map<MovieDetailDto>(movie);
     }
@@ -41,15 +41,13 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
     public async Task UpdateMovieAsync(int id, MovieUpdateDto updateDto)
     {
         if (!await uow.Genres.AnyByIdAsync(updateDto.GenreId))
-            return; // TODO: throw exception
+            throw new NotFoundException<Genre>(updateDto.GenreId);
 
         if (id != updateDto.Id)
             return; // TODO: throw exception
 
-        var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true, trackChanges: true);
-
-        if (movie is null)
-            return; // TODO: throw exception
+        var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true, trackChanges: true)
+            ?? throw new NotFoundException<Movie>(id);
 
         mapper.Map(updateDto, movie);
         await uow.CompleteAsync();
@@ -57,9 +55,8 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
     public async Task<MovieUpdateDto> GetMovieForPatchAsync(int id)
     {
-        var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true);
-        if (movie is null)
-            return null!; // TODO: throw exception
+        var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true)
+            ?? throw new NotFoundException<Movie>(id);
 
         return mapper.Map<MovieUpdateDto>(movie);
     }
@@ -67,7 +64,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
     public async Task<MovieDto> PostMovieAsync(MovieCreateDto createDto)
     {
         if (!await uow.Genres.AnyByIdAsync(createDto.GenreId))
-            return null!; // TODO: throw exception
+            throw new NotFoundException<Genre>(createDto.GenreId);
 
         var movie = mapper.Map<Movie>(createDto);
 
@@ -80,7 +77,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
     public async Task DeleteMovieAsync(int id)
     {
         if (!await uow.Movies.AnyByIdAsync(id))
-            return; // TODO: throw exception
+            throw new NotFoundException<Movie>(id);
 
         uow.Movies.RemoveById(id);
         await uow.CompleteAsync();

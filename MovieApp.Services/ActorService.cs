@@ -6,6 +6,7 @@ using MovieApp.Core.Entities;
 using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 using MovieApp.Services.Extensions;
+using MovieApp.Core.Exceptions;
 
 namespace MovieApp.Services;
 
@@ -19,10 +20,8 @@ public class ActorService(IUnitOfWork uow, IMapper mapper) : IActorService
 
     public async Task<ActorDto> GetActorAsync(int id)
     {
-        var actor = await uow.Actors.GetByIdAsync(id);
-        if (actor == null)
-            return null!; // TODO: throw exception;
-
+        var actor = await uow.Actors.GetByIdAsync(id)
+            ?? throw new NotFoundException<Actor>(id);
         return mapper.Map<ActorDto>(actor);
     }
 
@@ -31,10 +30,8 @@ public class ActorService(IUnitOfWork uow, IMapper mapper) : IActorService
         if (id != updateDto.Id)
             return; // TODO: throw exception;
 
-        var actor = await uow.Actors.GetByIdAsync(id, true);
-
-        if (actor is null)
-            return; // TODO: throw exception;
+        var actor = await uow.Actors.GetByIdAsync(id, true)
+            ?? throw new NotFoundException<Actor>(id);
 
         mapper.Map(updateDto, actor);
         await uow.CompleteAsync();

@@ -7,6 +7,7 @@ using MovieApp.Core.Entities;
 using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 using MovieApp.Services.Extensions;
+using MovieApp.Core.Exceptions;
 
 namespace MovieApp.Services;
 
@@ -15,7 +16,7 @@ public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
     public async Task<PagedResult<ActorWithRoleDto>> GetMovieActorsAsync(PageParameters parameters, int movieId)
     {
         if (!await uow.Movies.AnyByIdAsync(movieId))
-            return null!; // TODO: throw exception
+            throw new NotFoundException<Movie>(movieId);
 
         var result = await uow.Roles.GetMovieRolesAsync(parameters, movieId);
         return result.Map<Role, ActorWithRoleDto>(mapper);
@@ -26,8 +27,10 @@ public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
         var movieMissing = !await uow.Movies.AnyByIdAsync(movieId);
         var actorMissing = !await uow.Actors.AnyByIdAsync(createDto.ActorId);
 
-        if (movieMissing || actorMissing)
-            return;// TODO: throw exception
+        if (movieMissing)
+            throw new NotFoundException<Movie>(movieId);
+        if (actorMissing)
+            throw new NotFoundException<Actor>(createDto.ActorId);
 
         if (await uow.Roles.AnyAsync(role => role.MovieId == movieId && role.ActorId == createDto.ActorId))
             return; // TODO: throw exception

@@ -2,6 +2,8 @@ using AutoMapper;
 using MovieApp.Contracts;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Dtos.Reports;
+using MovieApp.Core.Entities;
+using MovieApp.Core.Exceptions;
 
 namespace MovieApp.Services;
 
@@ -21,27 +23,24 @@ public class ReportService(IUnitOfWork uow, IMapper mapper) : IReportService
 
     public async Task<ActorWithRolesCountDto> GetActorWithMostRolesAsync()
     {
-        var actor = await uow.Reports.GetActorWithMostRolesAsync();
-        if (actor is null)
-            return null!; // TODO: throw exception
+        var actor = await uow.Reports.GetActorWithMostRolesAsync()
+            ?? throw new NotFoundException<Actor>("No data available to generate this report.");
 
         return mapper.Map<ActorWithRolesCountDto>(actor);
     }
 
     public async Task<MovieWithReviewsCountDto> GetFilmWithMostReviewsAsync()
     {
-        var movie = await uow.Reports.GetFilmWithMostReviewsAsync();
-        if (movie is null)
-            return null!; // TODO: throw exception
+        var movie = await uow.Reports.GetFilmWithMostReviewsAsync()
+            ?? throw new NotFoundException<Movie>("No data available to generate this report.");
 
         return mapper.Map<MovieWithReviewsCountDto>(movie);
     }
 
     public async Task<GenreWithMoviesCountDto> GetGenreWithMostMoviesAsync()
     {
-        var genre = await uow.Reports.GetGenreWithMostMoviesAsync();
-        if (genre is null)
-            return null!; // TODO: throw exception
+        var genre = await uow.Reports.GetGenreWithMostMoviesAsync()
+            ?? throw new NotFoundException<Genre>("No data available to generate this report.");
 
         return mapper.Map<GenreWithMoviesCountDto>(genre);
     }
