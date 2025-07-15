@@ -4,6 +4,8 @@ using MovieApp.Core.Dtos.Movie;
 using MovieApp.Core.Parameters;
 using MovieApp.Contracts;
 using Microsoft.AspNetCore.JsonPatch;
+using MovieApp.Presentation.Extensions;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace MovieApp.Presentation.Controllers;
 
@@ -24,8 +26,12 @@ public class MoviesController(IServiceManager serviceManager) : AppController(se
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<MovieDto>>> GetMovies(
-        [FromQuery] MovieParameters? parameters) =>
-        Ok(await movieService.GetMoviesAsync(parameters));
+        [FromQuery] MovieParameters parameters)
+    {
+        var result = await movieService.GetMoviesAsync(parameters);
+        this.IncludePaginationMeta(result.Details);
+        return Ok(result.Items);
+    }
 
     /// <summary>
     /// Retrieve movie by id

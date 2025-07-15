@@ -1,6 +1,6 @@
 namespace MovieApp.Core.Parameters;
 
-public class MovieParameters
+public class MovieParameters : PageParameters
 {
     public string? Title { get; set; }
     public int? Year { get; set; }

@@ -1,11 +1,12 @@
 using MovieApp.Core.Dtos.Movie;
 using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 
 namespace MovieApp.Contracts;
 
 public interface IMovieService
 {
-    public Task<IEnumerable<MovieDto>> GetMoviesAsync(MovieParameters? parameters);
+    public Task<PagedResult<MovieDto>> GetMoviesAsync(MovieParameters parameters);
     public Task<MovieDto> GetMovieAsync(int id, bool withActors = false);
     public Task<MovieDetailDto> GetMovieDetailedAsync(int id);
     public Task UpdateMovieAsync(int id, MovieUpdateDto updateDto);

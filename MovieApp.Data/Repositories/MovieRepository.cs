@@ -2,24 +2,31 @@ using Microsoft.EntityFrameworkCore;
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Entities;
 using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
+using MovieApp.Data.Extensions;
 
 namespace MovieApp.Data.Repositories;
 
 public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>(context), IMovieRepository
 {
-    public async Task<IEnumerable<Movie>> GetMoviesAsync(MovieParameters? parameters, bool trackChanges = false)
+    public async Task<PagedResult<Movie>> GetMoviesAsync(MovieParameters parameters, bool trackChanges = false)
     {
         var query = FindAll(trackChanges: trackChanges);
-        if (parameters?.Title is not null)
+        if (parameters.Title is not null)
             query = query.Where(m => EF.Functions.Like(m.Title, $"%{parameters.Title}%"));
-        if (parameters?.Year is not null)
+        if (parameters.Year is not null)
             query = query.Where(m => m.Year == parameters.Year);
-        if (parameters?.Genre is not null)
+        if (parameters.Genre is not null)
             query = query.Where(m => EF.Functions.Like(m.Genre.Name, parameters.Genre));
-        if (parameters?.Actor is not null)
+        if (parameters.Actor is not null)
             query = query.Where(m => m.Roles.Any(a => EF.Functions.Like(a.Actor.Name, $"%{parameters.Actor}%")));
 
-        return await query.ToListAsync();
+        return new PagedResult<Movie>(
+            items: await query.WithOffset(parameters.PageSize, parameters.PageIndex).ToListAsync(),
+            pageIndex: parameters.PageIndex,
+            pageSize: parameters.PageSize,
+            totalCount: await query.CountAsync()
+        );
     }
 
     public Task<Movie?> GetMovieAsync(

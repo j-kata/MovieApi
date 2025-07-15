@@ -29,7 +29,7 @@ public class ActorsController(IServiceManager serviceManager) : AppController(se
     {
         var result = await actorService.GetActorsAsync(parameters, name);
 
-        this.IncludePaginationMeta(result.Meta);
+        this.IncludePaginationMeta(result.Details);
         return Ok(result.Items);
     }
 
