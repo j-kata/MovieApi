@@ -11,8 +11,10 @@ namespace MovieApp.Presentation.Controllers;
 /// Roles controller
 /// </summary>
 /// <param name="serviceManager">ServiceManager</param>
+[ApiController]
+[Produces("application/json")]
 [Route("api/movies/{movieId}/actors")]
-public class RolesController(IServiceManager serviceManager) : AppController(serviceManager)
+public class RolesController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IRoleService roleService = serviceManager.RoleService;
 
@@ -20,6 +22,7 @@ public class RolesController(IServiceManager serviceManager) : AppController(ser
     /// Retrieve all actors in a specified movie
     /// </summary>
     /// <param name="movieId">Id of the movie</param>
+    /// <param name="parameters">Pagination parameters.</param>
     /// <returns>List of matching actors, or 404 if movie not found</returns>
     [HttpGet(Name = "GetMovieActors")]
     [ProducesResponseType(StatusCodes.Status200OK)]

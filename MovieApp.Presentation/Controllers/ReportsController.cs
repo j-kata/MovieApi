@@ -10,8 +10,10 @@ namespace MovieApp.Presentation.Controllers;
 /// Reports controller
 /// </summary>
 /// <param name="serviceManager">ServiceManager</param>
+[ApiController]
+[Produces("application/json")]
 [Route("api/reports")]
-public class ReportsController(IServiceManager serviceManager) : AppController(serviceManager)
+public class ReportsController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IReportService reportService = serviceManager.ReportService;
     /// <summary>

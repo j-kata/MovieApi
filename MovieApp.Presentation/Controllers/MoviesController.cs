@@ -12,15 +12,17 @@ namespace MovieApp.Presentation.Controllers;
 /// Movies controller
 /// </summary>
 /// <param name="serviceManager">ServiceManager</param>
+[ApiController]
+[Produces("application/json")]
 [Route("api/movies")]
-public class MoviesController(IServiceManager serviceManager) : AppController(serviceManager)
+public class MoviesController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IMovieService movieService = serviceManager.MovieService;
 
     /// <summary>
     /// Retrieve movies, optionally filtered
     /// </summary>
-    /// <param name="parameters">Optional filter parameters</param>
+    /// <param name="parameters">Pagination and filter parameters</param>
     /// <returns>List of matching movies</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]

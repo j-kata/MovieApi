@@ -8,8 +8,10 @@ namespace MovieApp.Presentation.Controllers;
 /// Reviews controller
 /// </summary>
 /// <param name="serviceManager">ServiceManager</param>
+[ApiController]
+[Produces("application/json")]
 [Route("api/reviews/{id}")]
-public class ReviewsController(IServiceManager serviceManager) : AppController(serviceManager)
+public class ReviewsController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IReviewService reviewService = serviceManager.ReviewService;
 

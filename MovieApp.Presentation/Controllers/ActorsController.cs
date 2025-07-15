@@ -11,8 +11,10 @@ namespace MovieApp.Presentation.Controllers;
 /// Actors controller
 /// </summary>
 /// <param name="serviceManager">ServiceManager</param>
+[ApiController]
+[Produces("application/json")]
 [Route("api/actors")]
-public class ActorsController(IServiceManager serviceManager) : AppController(serviceManager)
+public class ActorsController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IActorService actorService = serviceManager.ActorService;
 
@@ -20,6 +22,7 @@ public class ActorsController(IServiceManager serviceManager) : AppController(se
     /// Retrieve all actors, optionally filtered by name.
     /// </summary>
     /// <param name="name">Name of the actor</param>
+    /// <param name="parameters">Pagination parameters.</param>
     /// <returns>List of matching actors</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]

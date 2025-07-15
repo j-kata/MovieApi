@@ -11,8 +11,10 @@ namespace MovieApp.Presentation.Controllers;
 /// Movie reviews controller
 /// </summary>
 /// <param name="serviceManager">ServiceManager</param>
+[ApiController]
+[Produces("application/json")]
 [Route("api/movies/{movieId}/reviews")]
-public class MovieReviewsController(IServiceManager serviceManager) : AppController(serviceManager)
+public class MovieReviewsController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IReviewService reviewService = serviceManager.ReviewService;
 
@@ -20,6 +22,7 @@ public class MovieReviewsController(IServiceManager serviceManager) : AppControl
     /// Retrieve all reviews of a specified movie
     /// </summary>
     /// <param name="movieId">Id of the movie</param>
+    /// <param name="parameters">Pagination parameters.</param>
     /// <returns>List of matching reviews, or 404 if movie not found</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
