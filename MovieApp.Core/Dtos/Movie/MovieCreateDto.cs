@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using MovieApp.Core.Validations;
+using MovieApp.Core.Dtos.Validations;
 
 namespace MovieApp.Core.Dtos.Movie;
 

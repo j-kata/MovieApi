@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Review;
 using MovieApp.Contracts;
 using MovieApp.Presentation.Extensions;
-using MovieApp.Core.Parameters;
-
+using MovieApp.Core.Dtos.Parameters;
 namespace MovieApp.Presentation.Controllers;
 
 /// <summary>

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Contracts;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Presentation.Extensions;
 
 namespace MovieApp.Presentation.Controllers;

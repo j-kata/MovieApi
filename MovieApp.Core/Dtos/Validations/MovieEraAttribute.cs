@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MovieApp.Core.Validations;
+namespace MovieApp.Core.Dtos.Validations;
 
 public class MovieEraAttribute(int startYear = 1888, int maxYearsAhead = 0) : ValidationAttribute
 {

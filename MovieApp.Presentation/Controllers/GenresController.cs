@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Contracts;
 using MovieApp.Core.Dtos.Genre;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Presentation.Extensions;
 
 namespace MovieApp.Presentation.Controllers;

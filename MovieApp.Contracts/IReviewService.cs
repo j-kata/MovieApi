@@ -1,5 +1,5 @@
 ﻿using MovieApp.Core.Dtos.Review;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 
 namespace MovieApp.Contracts;

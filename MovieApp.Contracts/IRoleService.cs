@@ -1,6 +1,6 @@
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Core.Dtos.Role;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 
 namespace MovieApp.Contracts;

@@ -1,4 +1,4 @@
-namespace MovieApp.Core.Parameters;
+namespace MovieApp.Core.Dtos.Parameters;
 
 public class PageParameters
 {
@@ -11,7 +11,7 @@ public class PageParameters
         get => _pageSize;
         set =>
             _pageSize = value > PageSizeMax
-            ? PageSizeMax 
+            ? PageSizeMax
             : value <= 0 ? PageSizeDefault : value;
     }
     public int PageIndex { get; set; } = 1;

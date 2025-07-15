@@ -4,7 +4,7 @@ using MovieApp.Core.Contracts;
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Core.Dtos.Role;
 using MovieApp.Core.Entities;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 using MovieApp.Services.Extensions;
 

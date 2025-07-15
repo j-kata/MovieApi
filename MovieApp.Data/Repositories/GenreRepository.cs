@@ -1,6 +1,6 @@
 using MovieApp.Core.Contracts;
 using MovieApp.Core.Entities;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 using MovieApp.Data.Extensions;
 

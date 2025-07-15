@@ -1,4 +1,4 @@
-namespace MovieApp.Core.Parameters;
+namespace MovieApp.Core.Dtos.Parameters;
 
 public class MovieParameters : PageParameters
 {

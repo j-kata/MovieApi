@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Movie;
-using MovieApp.Core.Parameters;
+using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Contracts;
 using Microsoft.AspNetCore.JsonPatch;
 using MovieApp.Presentation.Extensions;
