@@ -44,7 +44,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
             throw new NotFoundException<Genre>(updateDto.GenreId);
 
         if (id != updateDto.Id)
-            return; // TODO: throw exception
+            throw new BadRequestException("Id in URL does not match Id in body");
 
         var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true, trackChanges: true)
             ?? throw new NotFoundException<Movie>(id);

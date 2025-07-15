@@ -92,7 +92,7 @@ public class MoviesController(IServiceManager serviceManager) : ControllerBase
         TryValidateModel(updateDto);
 
         if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState); // TODO: throw exception
+            return UnprocessableEntity(ModelState);
 
         await movieService.UpdateMovieAsync(id, updateDto);
         return NoContent();

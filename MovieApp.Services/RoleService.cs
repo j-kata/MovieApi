@@ -33,7 +33,7 @@ public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
             throw new NotFoundException<Actor>(createDto.ActorId);
 
         if (await uow.Roles.AnyAsync(role => role.MovieId == movieId && role.ActorId == createDto.ActorId))
-            return; // TODO: throw exception
+            throw new ConflictException($"Actor {createDto.ActorId} has already a role in movie {movieId}");
 
         var role = mapper.Map<Role>(createDto);
         role.MovieId = movieId;

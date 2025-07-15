@@ -28,7 +28,7 @@ public class ActorService(IUnitOfWork uow, IMapper mapper) : IActorService
     public async Task PutActorAsync(int id, ActorUpdateDto updateDto)
     {
         if (id != updateDto.Id)
-            return; // TODO: throw exception;
+            throw new BadRequestException("Id in URL does not match Id in body");
 
         var actor = await uow.Actors.GetByIdAsync(id, true)
             ?? throw new NotFoundException<Actor>(id);

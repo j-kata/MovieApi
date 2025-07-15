@@ -40,11 +40,11 @@ public class RolesController(IServiceManager serviceManager) : ControllerBase
     /// </summary>
     /// <param name="movieId">Id of the movie</param>
     /// <param name="createDto">Role information</param>
-    /// <returns>Role info if created, 404 if movie or actor not found, 400 if request not valid</returns>
+    /// <returns>Role info if created, 404 if movie or actor not found, 409 if actor is already in a movie</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> PostMovieActor(
         [FromRoute] int movieId,
         [FromBody] RoleCreateDto createDto)
