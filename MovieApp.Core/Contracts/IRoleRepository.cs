@@ -1,8 +1,10 @@
 using MovieApp.Core.Entities;
+using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 
 namespace MovieApp.Core.Contracts;
 
 public interface IRoleRepository : IBaseRepository<Role>
 {
-    Task<IEnumerable<Role>> GetMovieRolesAsync(int movieId, bool trackChanges = false);
+    Task<PagedResult<Role>> GetMovieRolesAsync(PageParameters parameters, int movieId, bool trackChanges = false);
 }

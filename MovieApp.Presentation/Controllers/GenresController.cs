@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Contracts;
 using MovieApp.Core.Dtos.Genre;
+using MovieApp.Core.Parameters;
+using MovieApp.Presentation.Extensions;
 
 namespace MovieApp.Presentation.Controllers;
 
@@ -19,6 +21,10 @@ public class GenresController(IServiceManager serviceManager)
     /// </summary>
     /// <returns>List of genres</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GenreDto>>> GetGenres() =>
-        Ok(await genreService.GetGenresAsync());
+    public async Task<ActionResult<IEnumerable<GenreDto>>> GetGenres([FromQuery] PageParameters parameters)
+    {
+        var result = await genreService.GetGenresAsync(parameters);
+        this.IncludePaginationMeta(result.Details);
+        return Ok(result.Items);
+    }
 }

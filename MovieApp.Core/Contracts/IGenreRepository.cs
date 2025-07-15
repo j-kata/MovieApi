@@ -1,8 +1,10 @@
 using MovieApp.Core.Entities;
+using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 
 namespace MovieApp.Core.Contracts;
 
 public interface IGenreRepository : IBaseRepositoryWithId<Genre>
 {
-    public Task<IEnumerable<Genre>> GetGenresAsync(bool trackChanges = false);
+    public Task<PagedResult<Genre>> GetGenresAsync(PageParameters parameters, bool trackChanges = false);
 }

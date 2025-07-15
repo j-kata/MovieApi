@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Core.Dtos.Role;
 using MovieApp.Contracts;
+using MovieApp.Core.Parameters;
+using MovieApp.Presentation.Extensions;
 
 namespace MovieApp.Presentation.Controllers;
 /// <summary>
@@ -22,8 +24,13 @@ public class RolesController(IServiceManager serviceManager) : AppController(ser
     [HttpGet(Name = "GetMovieActors")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<ActorWithRoleDto>>> GetMovieActors(int movieId) =>
-        Ok(await roleService.GetMovieActorsAsync(movieId));
+    public async Task<ActionResult<IEnumerable<ActorWithRoleDto>>> GetMovieActors(
+        [FromQuery] PageParameters parameters, int movieId)
+    {
+        var result = await roleService.GetMovieActorsAsync(parameters, movieId);
+        this.IncludePaginationMeta(result.Details);
+        return Ok(result.Items);
+    }
 
     /// <summary>
     /// Add specified actor with role title to movie

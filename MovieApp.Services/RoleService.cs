@@ -4,18 +4,24 @@ using MovieApp.Core.Contracts;
 using MovieApp.Core.Dtos.Actor;
 using MovieApp.Core.Dtos.Role;
 using MovieApp.Core.Entities;
+using MovieApp.Core.Parameters;
+using MovieApp.Core.Shared;
 
 namespace MovieApp.Services;
 
 public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
 {
-    public async Task<IEnumerable<ActorWithRoleDto>> GetMovieActorsAsync(int movieId)
+    public async Task<PagedResult<ActorWithRoleDto>> GetMovieActorsAsync(PageParameters parameters, int movieId)
     {
         if (!await uow.Movies.AnyByIdAsync(movieId))
             return null!; // TODO: throw exception
 
-        var roles = await uow.Roles.GetMovieRolesAsync(movieId);
-        return mapper.Map<IEnumerable<ActorWithRoleDto>>(roles);
+        var result = await uow.Roles.GetMovieRolesAsync(parameters, movieId);
+
+        return new PagedResult<ActorWithRoleDto>(
+            items: mapper.Map<IEnumerable<ActorWithRoleDto>>(result.Items),
+            details: result.Details
+        ); ;
     }
 
     public async Task PostMovieActorAsync(int movieId, RoleCreateDto createDto)
