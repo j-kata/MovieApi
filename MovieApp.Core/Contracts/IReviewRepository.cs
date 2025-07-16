@@ -11,4 +11,6 @@ public interface IReviewRepository : IBaseRepositoryWithId<Review>
         int movieId,
         bool newestFirst = true,
         bool trackChanges = false);
+
+    public Task<int> GetMovieReviewsCountAsync(int movieId);
 }

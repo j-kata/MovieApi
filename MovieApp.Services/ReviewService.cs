@@ -12,6 +12,10 @@ namespace MovieApp.Services;
 
 public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
 {
+    private const int DefaultMaxCount = 10;
+    private const int OldMovieMaxCount = 5;
+    private const int OldMovieAge = 20;
+
     public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int movieId, PageParameters parameters)
     {
         if (!await uow.Movies.AnyByIdAsync(movieId))
@@ -25,6 +29,16 @@ public class ReviewService(IUnitOfWork uow, IMapper mapper) : IReviewService
     {
         var movie = await uow.Movies.GetByIdAsync(movieId, trackChanges: true)
             ?? throw new NotFoundException<Movie>(movieId);
+
+        var reviewsCount = await uow.Reviews.GetMovieReviewsCountAsync(movieId);
+
+        // rule for old movies
+        if (movie.Age > OldMovieAge && reviewsCount >= OldMovieMaxCount)
+            throw new ConflictException($"A {OldMovieAge}yo movie cannot have more than {OldMovieMaxCount} reviews");
+
+        // rule for all movies
+        if (reviewsCount >= DefaultMaxCount)
+            throw new ConflictException($"A movie cannot have more than {DefaultMaxCount} reviews");
 
         var review = mapper.Map<Review>(createDto);
         movie.Reviews.Add(review);

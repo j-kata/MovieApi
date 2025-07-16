@@ -64,10 +64,11 @@ public class MoviesController(IServiceManager serviceManager) : ControllerBase
     /// </summary>
     /// <param name="id">Id of the movie</param>
     /// <param name="updateDto">New values for the movie</param>
-    /// <returns>No content if successful, 404 if movie not found, 400 if request not valid</returns>
+    /// <returns>No content if successful, 404 if movie not found, 400 if request not valid, 409 if conflict</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateDto)
     {
@@ -79,11 +80,12 @@ public class MoviesController(IServiceManager serviceManager) : ControllerBase
     /// </summary>
     /// <param name="id">Id of the movie</param>
     /// <param name="patchDocument">Patch document</param>
-    /// <returns>No content if successful, 404 if movie not found, 400 if request not valid, 422 if entity is unprocessable</returns>
+    /// <returns>No content if successful, 404 if movie not found, 400 if request not valid, 409 if conflict, 422 if entity is unprocessable</returns>
     [HttpPatch("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> PatchMovie(int id, JsonPatchDocument<MovieUpdateDto> patchDocument)
     {
@@ -102,10 +104,11 @@ public class MoviesController(IServiceManager serviceManager) : ControllerBase
     /// Create new movie
     /// </summary>
     /// <param name="createDto">Values for the new movie</param>
-    /// <returns>New movie if created, 400 if request not valid</returns>
+    /// <returns>New movie if created, 400 if request not valid, 409 if conflict</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto createDto)
     {
         var dto = await movieService.PostMovieAsync(createDto);

@@ -46,6 +46,9 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         if (id != updateDto.Id)
             throw new BadRequestException("Id in URL does not match Id in body");
 
+        if (await IsMovieTitleDuplicate(updateDto.Title))
+            throw new ConflictException($"A movie with title \"{updateDto.Title}\" already exists");
+
         var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true, trackChanges: true)
             ?? throw new NotFoundException<Movie>(id);
 
@@ -66,6 +69,9 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         if (!await uow.Genres.AnyByIdAsync(createDto.GenreId))
             throw new NotFoundException<Genre>(createDto.GenreId);
 
+        if (await IsMovieTitleDuplicate(createDto.Title))
+            throw new ConflictException($"A movie with title \"{createDto.Title}\" already exists");
+
         var movie = mapper.Map<Movie>(createDto);
 
         uow.Movies.Add(movie);
@@ -82,4 +88,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         uow.Movies.RemoveById(id);
         await uow.CompleteAsync();
     }
+
+    private Task<bool> IsMovieTitleDuplicate(string title) =>
+        uow.Movies.AnyAsync(movie => movie.Title.ToLower() == title.ToLower());
 }

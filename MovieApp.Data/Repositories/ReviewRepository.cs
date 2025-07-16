@@ -3,6 +3,7 @@ using MovieApp.Core.Entities;
 using MovieApp.Core.Dtos.Parameters;
 using MovieApp.Core.Shared;
 using MovieApp.Data.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace MovieApp.Data.Repositories;
 
@@ -22,4 +23,7 @@ public class ReviewRepository(MovieContext context)
 
         return await query.ToPagedResultAsync(parameters.PageSize, parameters.PageIndex);
     }
+
+    public async Task<int> GetMovieReviewsCountAsync(int movieId) =>
+        await FindBy(r => r.MovieId == movieId).CountAsync();
 }

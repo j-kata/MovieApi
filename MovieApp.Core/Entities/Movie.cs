@@ -13,4 +13,6 @@ public class Movie : IHasId
     public MovieDetail MovieDetail { get; set; } = null!;
     public ICollection<Role> Roles { get; set; } = [];
     public ICollection<Review> Reviews { get; set; } = [];
+
+    public int Age => DateTime.Now.Year - Year;
 }
