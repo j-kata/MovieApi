@@ -1,5 +1,5 @@
 namespace MovieApp.Core.Exceptions;
 
-public class BadRequestException(string message, string title = "Conflict")
-    : DefaultException(message, title)
+public class BadRequestException(string message, string title = "Bad Request")
+    : ApiException(message, title)
 { }

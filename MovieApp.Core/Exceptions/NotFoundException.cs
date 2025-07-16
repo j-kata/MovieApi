@@ -1,6 +1,9 @@
 namespace MovieApp.Core.Exceptions;
 
-public class NotFoundException<T> : DefaultException
+public interface INotFoundException // to check type without generic
+{ }
+
+public class NotFoundException<T> : ApiException, INotFoundException
 {
     private const string DefaultTitle = "Object not found";
 
