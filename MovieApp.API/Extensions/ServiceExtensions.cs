@@ -30,39 +30,33 @@ public static class ServiceExtensions
     public static void AddApiServices(this IServiceCollection services)
     {
         services.AddScoped<IServiceManager, ServiceManager>();
-        services.AddScoped<IReviewService, ReviewService>();
-        services.AddScoped<IRoleService, RoleService>();
-        services.AddScoped<IActorService, ActorService>();
-        services.AddScoped<IMovieService, MovieService>();
-        services.AddScoped<IGenreService, GenreService>();
-        services.AddScoped<IReportService, ReportService>();
-
-        services.AddLazyService<IReviewService>();
-        services.AddLazyService<IRoleService>();
-        services.AddLazyService<IActorService>();
-        services.AddLazyService<IMovieService>();
-        services.AddLazyService<IGenreService>();
-        services.AddLazyService<IReportService>();
+        services.AddServiceWithLazy<IReviewService, ReviewService>();
+        services.AddServiceWithLazy<IRoleService, RoleService>();
+        services.AddServiceWithLazy<IActorService, ActorService>();
+        services.AddServiceWithLazy<IMovieService, MovieService>();
+        services.AddServiceWithLazy<IGenreService, GenreService>();
+        services.AddServiceWithLazy<IReportService, ReportService>();
     }
 
     public static void AddApiRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IReviewRepository, ReviewRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IActorRepository, ActorRepository>();
-        services.AddScoped<IMovieRepository, MovieRepository>();
-        services.AddScoped<IGenreRepository, GenreRepository>();
-        services.AddScoped<IReportRepository, ReportRepository>();
-
-        services.AddLazyService<IReviewRepository>();
-        services.AddLazyService<IRoleRepository>();
-        services.AddLazyService<IActorRepository>();
-        services.AddLazyService<IMovieRepository>();
-        services.AddLazyService<IGenreRepository>();
-        services.AddLazyService<IReportRepository>();
+        services.AddServiceWithLazy<IReviewRepository, ReviewRepository>();
+        services.AddServiceWithLazy<IRoleRepository, RoleRepository>();
+        services.AddServiceWithLazy<IActorRepository, ActorRepository>();
+        services.AddServiceWithLazy<IMovieRepository, MovieRepository>();
+        services.AddServiceWithLazy<IGenreRepository, GenreRepository>();
+        services.AddServiceWithLazy<IReportRepository, ReportRepository>();
     }
 
-    public static void AddLazyService<T>(this IServiceCollection services) where T : class =>
+    private static void AddServiceWithLazy<TInterface, TImplementation>(this IServiceCollection services)
+        where TInterface : class
+        where TImplementation : class, TInterface
+    {
+        services.AddScoped<TInterface, TImplementation>();
+        services.AddLazyService<TInterface>();
+    }
+
+    private static void AddLazyService<T>(this IServiceCollection services) where T : class =>
         services.AddScoped(provider => new Lazy<T>(() => provider.GetRequiredService<T>()));
 }
