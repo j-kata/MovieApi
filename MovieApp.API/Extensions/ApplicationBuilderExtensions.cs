@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MovieApp.Data;
 
 namespace MovieApp.API.Extensions;

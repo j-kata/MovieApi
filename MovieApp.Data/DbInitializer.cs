@@ -5,7 +5,7 @@ namespace MovieApp.Data;
 
 public static class DbInitializer
 {
-    private static readonly string[] _genreNames = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi"];
+    private static readonly string[] _genreNames = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Documentary"];
 
     public static async Task Seed(MovieContext context)
     {
