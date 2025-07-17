@@ -43,4 +43,10 @@ public class MovieRepository(MovieContext context) : BaseRepositoryWithId<Movie>
 
         return query.FirstOrDefaultAsync();
     }
+
+    // public Task<Movie?> GetMovieWithGenre(int id, bool trackChanges) =>
+    //     FindBy(m => m.Id == id, trackChanges).Include(m => m.Genre).FirstOrDefaultAsync();
+
+    public Task<string?> GetGenreNameIfMovieExists(int id) =>
+        FindBy(m => m.Id == id).Select(m => m.Genre.Name).FirstOrDefaultAsync();
 }

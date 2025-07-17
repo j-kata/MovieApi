@@ -13,6 +13,8 @@ namespace MovieApp.Services;
 
 public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
 {
+    private const int MaxDocumentaryRoles = 10;
+
     public async Task<PagedResult<ActorWithRoleDto>> GetMovieActorsAsync(PageParameters parameters, int movieId)
     {
         if (!await uow.Movies.AnyByIdAsync(movieId))
@@ -24,13 +26,29 @@ public class RoleService(IUnitOfWork uow, IMapper mapper) : IRoleService
 
     public async Task PostMovieActorAsync(int movieId, RoleCreateDto createDto)
     {
-        var movieMissing = !await uow.Movies.AnyByIdAsync(movieId);
         var actorMissing = !await uow.Actors.AnyByIdAsync(createDto.ActorId);
-
-        if (movieMissing)
-            throw new NotFoundException<Movie>(movieId);
         if (actorMissing)
             throw new NotFoundException<Actor>(createDto.ActorId);
+
+        var genre = await uow.Movies.GetGenreNameIfMovieExists(movieId)
+            ?? throw new NotFoundException<Movie>(movieId);
+
+        if (genre == "Documentary")
+        {
+            var countRoles = await uow.Roles.CountAsync(r => r.MovieId == movieId);
+            if (countRoles >= MaxDocumentaryRoles)
+                throw new ConflictException($"Documentaries cannot have more than {MaxDocumentaryRoles} roles");
+        }
+
+        // var movie = await uow.Movies.GetMovieWithGenre(movieId)
+        //     ?? throw new NotFoundException<Movie>(movieId);
+
+        // if (movie.Genre.Name == "Documentary")
+        // {
+        //     var countRoles = await uow.Roles.CountAsync(r => r.MovieId == movie.Id);
+        //     if (countRoles >= MaxDocumentaryRoles)
+        //         throw new ConflictException($"Documentaries cannot have more than {MaxDocumentaryRoles} roles");
+        // }
 
         if (await uow.Roles.AnyAsync(role => role.MovieId == movieId && role.ActorId == createDto.ActorId))
             throw new ConflictException($"Actor {createDto.ActorId} has already a role in movie {movieId}");

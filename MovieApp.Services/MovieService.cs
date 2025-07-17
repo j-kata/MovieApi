@@ -23,7 +23,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
         var movie = await uow.Movies.GetMovieAsync(id, includeActors: withActors)
             ?? throw new NotFoundException<Movie>(id);
 
-        // TODO: replace with general one?
+        // TODO: replace with one?
         return withActors
             ? mapper.Map<MovieWithActorsDto>(movie)
             : mapper.Map<MovieDto>(movie);
@@ -40,17 +40,13 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
     public async Task UpdateMovieAsync(int id, MovieUpdateDto updateDto)
     {
-        if (!await uow.Genres.AnyByIdAsync(updateDto.GenreId))
-            throw new NotFoundException<Genre>(updateDto.GenreId);
-
         if (id != updateDto.Id)
             throw new BadRequestException("Id in URL does not match Id in body");
 
-        if (await IsMovieTitleDuplicate(updateDto.Title))
-            throw new ConflictException($"A movie with title \"{updateDto.Title}\" already exists");
-
         var movie = await uow.Movies.GetMovieAsync(id, includeDetails: true, trackChanges: true)
             ?? throw new NotFoundException<Movie>(id);
+
+        await ValidateConstraintsAsync(updateDto.GenreId, updateDto.Title, updateDto.Budget);
 
         mapper.Map(updateDto, movie);
         await uow.CompleteAsync();
@@ -66,11 +62,7 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
     public async Task<MovieDto> PostMovieAsync(MovieCreateDto createDto)
     {
-        if (!await uow.Genres.AnyByIdAsync(createDto.GenreId))
-            throw new NotFoundException<Genre>(createDto.GenreId);
-
-        if (await IsMovieTitleDuplicate(createDto.Title))
-            throw new ConflictException($"A movie with title \"{createDto.Title}\" already exists");
+        await ValidateConstraintsAsync(createDto.GenreId, createDto.Title, createDto.Budget);
 
         var movie = mapper.Map<Movie>(createDto);
 
@@ -91,4 +83,17 @@ public class MovieService(IUnitOfWork uow, IMapper mapper) : IMovieService
 
     private Task<bool> IsMovieTitleDuplicate(string title) =>
         uow.Movies.AnyAsync(movie => movie.Title.ToLower() == title.ToLower());
+
+    private async Task ValidateConstraintsAsync(int genreId, string movieTitle, int? budget)
+    {
+        var genre = await uow.Genres.GetByIdAsync(genreId)
+            ?? throw new NotFoundException<Genre>(genreId);
+
+        if (genre.Name == "Documentary" && budget > 1_000_000)
+            throw new ConflictException("A documentary cannot have a budget over 1M");
+
+        if (await IsMovieTitleDuplicate(movieTitle))
+            throw new ConflictException($"A movie with title \"{movieTitle}\" already exists");
+
+    }
 }

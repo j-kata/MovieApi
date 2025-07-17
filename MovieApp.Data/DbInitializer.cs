@@ -37,11 +37,13 @@ public static class DbInitializer
             .RuleFor(o => o.Name, f => _genreNames[f.IndexVariable++])
             .Generate(count);
 
-    private static MovieDetail GenerateMovieDetails() =>
+    private static MovieDetail GenerateMovieDetails(Movie movie) =>
         new Faker<MovieDetail>()
             .RuleFor(o => o.Synopsis, f => f.Lorem.Paragraph(2))
             .RuleFor(o => o.Language, f => f.Lorem.Word())
-            .RuleFor(o => o.Budget, f => (int)f.Finance.Amount(100000, 500000000))
+            .RuleFor(o => o.Budget, f => movie.Genre.Name == "Documentary"
+                ? (int)f.Finance.Amount(100_000, 1_000_000)
+                : (int)f.Finance.Amount(100_000, 500_000_000))
             .Generate();
 
     private static IEnumerable<Movie> GenerateMovies(int count, IEnumerable<Genre> genres) =>
@@ -50,7 +52,7 @@ public static class DbInitializer
             .RuleFor(o => o.Title, f => $"{f.Lorem.Sentence(1, 5)} {f.UniqueIndex}")
             .RuleFor(o => o.Year, f => f.Date.Past(40).Year)
             .RuleFor(o => o.Duration, f => f.Date.Timespan(new TimeSpan(4, 0, 0)))
-            .RuleFor(o => o.MovieDetail, f => GenerateMovieDetails())
+            .RuleFor(o => o.MovieDetail, (f, o) => GenerateMovieDetails(o))
             .FinishWith((f, o) => o.MovieDetail.Movie = o)
             .Generate(count);
 
@@ -73,6 +75,7 @@ public static class DbInitializer
         HashSet<(Movie, Actor)> uniquePairs = [];
         Faker faker = new();
         List<Role> roles = [];
+        int documentaryRolesCounter = 0;
 
         for (int i = 0; i < count; i++)
         {
@@ -82,6 +85,13 @@ public static class DbInitializer
 
             if (uniquePairs.Contains(pair))
                 continue;
+
+            if (movie.Genre.Name == "Documentary")
+            {
+                if (documentaryRolesCounter >= 10)
+                    continue;
+                documentaryRolesCounter++;
+            }
 
             uniquePairs.Add(pair);
             roles.Add(new Role

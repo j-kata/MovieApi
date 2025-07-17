@@ -10,8 +10,8 @@ public class BaseRepository<T>(MovieContext context)
 {
     protected DbSet<T> DbSet { get; } = context.Set<T>();
 
-    public Task<bool> AnyAsync(Expression<Func<T, bool>> ex) =>
-        DbSet.AnyAsync(ex);
+    public Task<bool> AnyAsync(Expression<Func<T, bool>> predicate) =>
+        DbSet.AnyAsync(predicate);
 
     public IQueryable<T> FindBy(Expression<Func<T, bool>>? predicate = null, bool trackChanges = false) =>
         predicate is null
@@ -20,6 +20,9 @@ public class BaseRepository<T>(MovieContext context)
 
     public IQueryable<T> FindAll(bool trackChanges = false) => // alias
         FindBy(trackChanges: trackChanges);
+
+    public Task<int> CountAsync(Expression<Func<T, bool>> predicate) =>
+        FindBy(predicate).CountAsync();
 
     public void Attach(T entity) =>
         DbSet.Attach(entity);

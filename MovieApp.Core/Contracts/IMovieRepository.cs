@@ -16,4 +16,7 @@ public interface IMovieRepository : IBaseRepositoryWithId<Movie>
         bool includeDetails = false,
         bool includeReviews = false,
         bool trackChanges = false);
+
+    // public Task<Movie?> GetMovieWithGenre(int id, bool trackChanges = false);
+    public Task<string?> GetGenreNameIfMovieExists(int id);
 }
