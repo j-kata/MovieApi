@@ -32,12 +32,12 @@ public static class DbInitializer
         await context.SaveChangesAsync();
     }
 
-    private static IEnumerable<Genre> GenerateGenres(int count) =>
+    public static IEnumerable<Genre> GenerateGenres(int count) =>
         new Faker<Genre>()
             .RuleFor(o => o.Name, f => _genreNames[f.IndexVariable++])
             .Generate(count);
 
-    private static MovieDetail GenerateMovieDetails(Movie movie) =>
+    public static MovieDetail GenerateMovieDetails(Movie movie) =>
         new Faker<MovieDetail>()
             .RuleFor(o => o.Synopsis, f => f.Lorem.Paragraph(2))
             .RuleFor(o => o.Language, f => f.Lorem.Word())
@@ -46,7 +46,7 @@ public static class DbInitializer
                 : (int)f.Finance.Amount(100_000, 500_000_000))
             .Generate();
 
-    private static IEnumerable<Movie> GenerateMovies(int count, IEnumerable<Genre> genres) =>
+    public static IEnumerable<Movie> GenerateMovies(int count, IEnumerable<Genre> genres) =>
         new Faker<Movie>()
             .RuleFor(o => o.Genre, f => f.PickRandom(genres))
             .RuleFor(o => o.Title, f => $"{f.Lorem.Sentence(1, 5)} {f.UniqueIndex}")
@@ -56,7 +56,7 @@ public static class DbInitializer
             .FinishWith((f, o) => o.MovieDetail.Movie = o)
             .Generate(count);
 
-    private static IEnumerable<Review> GenerateReviews(int count, IEnumerable<Movie> movies) =>
+    public static IEnumerable<Review> GenerateReviews(int count, IEnumerable<Movie> movies) =>
         new Faker<Review>()
             .RuleFor(o => o.Movie, f => f.PickRandom(movies))
             .RuleFor(o => o.ReviewerName, f => f.Name.FullName())
@@ -64,13 +64,13 @@ public static class DbInitializer
             .RuleFor(o => o.Rating, f => f.Random.Number(1, 5))
             .Generate(count);
 
-    private static IEnumerable<Actor> GenerateActors(int count) =>
+    public static IEnumerable<Actor> GenerateActors(int count) =>
         new Faker<Actor>()
             .RuleFor(o => o.Name, f => f.Name.FullName())
             .RuleFor(o => o.BirthYear, f => f.Date.Past(100, DateTime.Now.AddYears(-2)).Year)
             .Generate(count);
 
-    private static IEnumerable<Role> GenerateRoles(int count, IEnumerable<Movie> movies, IEnumerable<Actor> actors)
+    public static IEnumerable<Role> GenerateRoles(int count, IEnumerable<Movie> movies, IEnumerable<Actor> actors)
     {
         HashSet<(Movie, Actor)> uniquePairs = [];
         Faker faker = new();
