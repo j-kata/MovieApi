@@ -32,7 +32,10 @@ public class MovieProfile : Profile
         CreateMap<Movie, MovieUpdateDto>()
             .ForMember(dest => dest.Synopsis, opt => opt.MapFrom(src => src.MovieDetail.Synopsis))
             .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.MovieDetail.Language))
-            .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetail.Budget));
+            .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.MovieDetail.Budget))
+            .ForMember(dest => dest.Hours, opt => opt.MapFrom(src => src.Duration.Hours))
+            .ForMember(dest => dest.Minutes, opt => opt.MapFrom(src => src.Duration.Minutes));
+
 
         CreateMap<Movie, MovieWithActorsDto>()
             .IncludeBase<Movie, MovieDto>()
