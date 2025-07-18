@@ -135,8 +135,7 @@ public class MovieServiceTests
     [Fact]
     public async Task DeleteMovieAsync_ThrowsException_WhenMovieDoesNotExist()
     {
-        uow.Setup(u => u.Movies.AnyByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync(false);
+        SetupMoviePresence(false);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.DeleteMovieAsync(MovieId));
@@ -145,8 +144,7 @@ public class MovieServiceTests
     [Fact]
     public async Task DeleteMovieAsync_DeletesMovieAndCompletes_WhenMovieExists()
     {
-        uow.Setup(u => u.Movies.AnyByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync(true);
+        SetupMoviePresence(true);
 
         await service.DeleteMovieAsync(MovieId);
 
@@ -302,6 +300,10 @@ public class MovieServiceTests
     private void SetupMovieDuplicate(bool duplicate) =>
         uow.Setup(u => u.Movies.AnyAsync(It.IsAny<Expression<Func<Movie, bool>>>()))
             .ReturnsAsync(duplicate);
+
+    private void SetupMoviePresence(bool isPresent) =>
+        uow.Setup(u => u.Movies.AnyByIdAsync(It.IsAny<int>()))
+            .ReturnsAsync(isPresent);
 
     private static Movie GenerateMovie(int id = MovieId, string title = MovieTitle) =>
         new() { Id = id, Title = title };
