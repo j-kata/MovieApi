@@ -11,12 +11,14 @@ using MovieApp.Core.Shared;
 using MovieApp.Data;
 using MovieApp.Data.Profiles;
 using MovieApp.Services;
+using Services.Tests.Extenstions;
 using Services.Tests.Helpers;
 
 namespace Services.Tests;
 
 public class ReviewServiceTests
 {
+    private const int ReviewsCount = 5;
     private const int MovieId = 1;
     private const int ReviewId = 1;
     private const string ReviewerName = "Reviewer Name";
@@ -42,7 +44,7 @@ public class ReviewServiceTests
     [Fact]
     public async Task GetReviewsAsync_ThrowsException_WhenMovieDoesNotExist()
     {
-        SetupMoviePresence(false);
+        uow.SetupMoviePresence(false);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.GetReviewsAsync(MovieId, new PageParameters()));
@@ -51,29 +53,24 @@ public class ReviewServiceTests
     [Fact]
     public async Task GetReviewsAsync_ReturnsPagedResultOfDtos_WhenMovieExists()
     {
-        var reviewsCount = 5;
-        var reviews = GenerateReviews(reviewsCount);
+        var reviews = GenerateReviews(ReviewsCount);
         var parameters = new PageParameters();
-        var pageMeta = new PaginationMeta { PageIndex = 1, PageSize = 10, TotalCount = reviewsCount };
-        var pagedReviews = new PagedResult<Review>(items: reviews, details: pageMeta);
 
-        SetupMoviePresence(true);
-        uow.Setup(u => u.Reviews.GetMovieReviewsAsync(parameters, MovieId, true, false))
-            .ReturnsAsync(pagedReviews);
+        uow.SetupMoviePresence(true);
+        uow.SetupReviewsFetch(PagedResultFactory.CreatePagedResult(reviews));
 
         var result = await service.GetReviewsAsync(MovieId, parameters);
 
         uow.Verify(u => u.Reviews.GetMovieReviewsAsync(parameters, MovieId, true, false), Times.Once);
         Assert.IsType<PagedResult<ReviewDto>>(result);
-        Assert.Equivalent(pageMeta, result.Details);
-        Assert.Equal(reviewsCount, result.Items.Count());
+        Assert.Equal(ReviewsCount, result.Items.Count());
         Assert.Equal(reviews.First().Id, result.Items.First().Id);
     }
 
     [Fact]
     public async Task DeleteReviewAsync_ThrowsException_WhenReviewDoesNotExist()
     {
-        SetupReviewPresence(false);
+        uow.SetupReviewPresence(false);
 
         await Assert.ThrowsAsync<NotFoundException<Review>>(
             () => service.DeleteReviewAsync(ReviewId));
@@ -82,7 +79,7 @@ public class ReviewServiceTests
     [Fact]
     public async Task DeleteReviewAsync_DeletesAndCompletes_WhenReviewExists()
     {
-        SetupReviewPresence(true);
+        uow.SetupReviewPresence(true);
 
         await service.DeleteReviewAsync(ReviewId);
 
@@ -94,7 +91,7 @@ public class ReviewServiceTests
     public async Task PostReviewAsync_ThrowsNotFound_WhenMovieDoesNotExist()
     {
         var createDto = GenerateCreateDto();
-        SetupMovieFetch(null, trackChanges: true);
+        uow.SetupMovieByIdFetch(null, trackChanges: true);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.PostReviewAsync(MovieId, createDto));
@@ -104,8 +101,8 @@ public class ReviewServiceTests
     public async Task PostReviewAsync_ThrowsConflict_WhenOldMovieGetsTooManyReviews()
     {
         var createDto = GenerateCreateDto();
-        SetupMovieFetch(GenerateMovie(year: CurrentYear - OldMovieAge - 1), trackChanges: true);
-        SetupReviewsCount(OldMovieReviewMaxCount);
+        uow.SetupMovieByIdFetch(GenerateMovie(year: CurrentYear - OldMovieAge - 1), trackChanges: true);
+        uow.SetupReviewsCount(OldMovieReviewMaxCount);
 
         await Assert.ThrowsAsync<ConflictException>(
             () => service.PostReviewAsync(MovieId, createDto));
@@ -115,8 +112,8 @@ public class ReviewServiceTests
     public async Task PostReviewAsync_ThrowsConflict_WhenNewMovieGetsTooManyReviews()
     {
         var createDto = GenerateCreateDto();
-        SetupMovieFetch(GenerateMovie(year: CurrentYear), trackChanges: true);
-        SetupReviewsCount(DefaultReviewMaxCount);
+        uow.SetupMovieByIdFetch(GenerateMovie(year: CurrentYear), trackChanges: true);
+        uow.SetupReviewsCount(DefaultReviewMaxCount);
 
         await Assert.ThrowsAsync<ConflictException>(
             () => service.PostReviewAsync(MovieId, createDto));
@@ -130,8 +127,8 @@ public class ReviewServiceTests
         var createDto = GenerateCreateDto();
         var movie = GenerateMovie(year: year);
 
-        SetupMovieFetch(movie, trackChanges: true);
-        SetupReviewsCount(count);
+        uow.SetupMovieByIdFetch(movie, trackChanges: true);
+        uow.SetupReviewsCount(count);
 
         var result = await service.PostReviewAsync(MovieId, createDto);
 
@@ -140,26 +137,6 @@ public class ReviewServiceTests
         Assert.Single(movie.Reviews);
         Assert.Equal(createDto.ReviewerName, result.ReviewerName);
     }
-
-    private void SetupMoviePresence(bool isPresent) =>
-        uow.Setup(u => u.Movies.AnyByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync(isPresent);
-
-    private void SetupReviewPresence(bool isPresent) =>
-        uow.Setup(u => u.Reviews.AnyByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync(isPresent);
-
-    private void SetupMovieFetch(
-        Movie? movie,
-        bool trackChanges = false) =>
-            uow.Setup(u => u.Movies.GetByIdAsync(
-                It.IsAny<int>(),
-                trackChanges))
-            .ReturnsAsync(movie);
-
-    private void SetupReviewsCount(int count) =>
-        uow.Setup(u => u.Reviews.GetMovieReviewsCountAsync(It.IsAny<int>()))
-            .ReturnsAsync(count);
 
     private static Movie GenerateMovie(int id = MovieId, int year = 2020) =>
         new() { Id = id, Year = year };

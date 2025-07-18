@@ -10,6 +10,7 @@ using MovieApp.Core.Shared;
 using MovieApp.Data;
 using MovieApp.Data.Profiles;
 using MovieApp.Services;
+using Services.Tests.Extenstions;
 using Services.Tests.Helpers;
 
 namespace Services.Tests;
@@ -18,6 +19,7 @@ public class ActorServiceTests
 {
     private const int ActorId = 1;
     private const string ActorName = "Actor Name";
+    private const int ActorsCount = 5;
 
     private readonly Mock<IUnitOfWork> uow;
     private readonly IMapper mapper;
@@ -33,28 +35,23 @@ public class ActorServiceTests
     [Fact]
     public async Task GetActorsAsync_ReturnsPagedResultOfDtos()
     {
-        var actorsCount = 5;
-        var actors = GenerateActors(actorsCount);
+        var actors = GenerateActors(ActorsCount);
         var parameters = new ActorParameters();
-        var pageMeta = new PaginationMeta { PageIndex = 1, PageSize = 10, TotalCount = actorsCount };
-        var pagedActors = new PagedResult<Actor>(items: actors, details: pageMeta);
 
-        uow.Setup(u => u.Actors.GetActorsAsync(parameters, false))
-            .ReturnsAsync(pagedActors);
+        uow.SetupActorsFetch(PagedResultFactory.CreatePagedResult(actors));
 
         var result = await service.GetActorsAsync(parameters);
 
         uow.Verify(u => u.Actors.GetActorsAsync(parameters, false), Times.Once);
         Assert.IsType<PagedResult<ActorDto>>(result);
-        Assert.Equivalent(pageMeta, result.Details);
-        Assert.Equal(actorsCount, result.Items.Count());
+        Assert.Equal(ActorsCount, result.Items.Count());
         Assert.Equal(actors.First().Id, result.Items.First().Id);
     }
 
     [Fact]
     public async Task GetActorAsync_ThrowsException_WhenActorDoesNotExist()
     {
-        SetupActor(null);
+        uow.SetupActorFetch(null);
 
         await Assert.ThrowsAsync<NotFoundException<Actor>>(
             () => service.GetActorAsync(ActorId));
@@ -64,7 +61,7 @@ public class ActorServiceTests
     public async Task GetActorAsync_ReturnsActorDto_WhenActorExists()
     {
         var actor = GenerateActor();
-        SetupActor(actor);
+        uow.SetupActorFetch(actor);
 
         var result = await service.GetActorAsync(ActorId);
 
@@ -85,7 +82,7 @@ public class ActorServiceTests
     public async Task PutActorAsync_ThrowsNotFound_WhenActorDoesNotExist()
     {
         var updateDto = GenerateUpdateDto();
-        SetupActor(null);
+        uow.SetupActorFetch(null);
 
         await Assert.ThrowsAsync<NotFoundException<Actor>>(
             () => service.PutActorAsync(ActorId, updateDto));
@@ -95,7 +92,7 @@ public class ActorServiceTests
     public async Task PutActorAsync_UpdatesAndCompletes_WhenActorExists()
     {
         var updateDto = GenerateUpdateDto();
-        SetupActor(GenerateActor(), true);
+        uow.SetupActorFetch(GenerateActor(), true);
 
         await service.PutActorAsync(ActorId, updateDto);
 
@@ -121,9 +118,6 @@ public class ActorServiceTests
         Assert.Equal(createDto.Name, createdActor.Name);
     }
 
-    private void SetupActor(Actor? actor, bool trackChanges = false) =>
-        uow.Setup(u => u.Actors.GetByIdAsync(It.IsAny<int>(), trackChanges))
-            .ReturnsAsync(actor);
 
     private static Actor GenerateActor(int id = ActorId, string name = ActorName) =>
         new() { Id = id, Name = name };

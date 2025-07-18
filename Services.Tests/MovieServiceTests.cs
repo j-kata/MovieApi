@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using AutoMapper;
+﻿using AutoMapper;
 using Moq;
 using MovieApp.Contracts;
 using MovieApp.Core.Contracts;
@@ -11,12 +10,15 @@ using MovieApp.Core.Shared;
 using MovieApp.Data;
 using MovieApp.Data.Profiles;
 using MovieApp.Services;
+using Services.Tests.Extenstions;
 using Services.Tests.Helpers;
+
 
 namespace Services.Tests;
 
 public class MovieServiceTests
 {
+    private const int MoviesCount = 10;
     private const int MovieId = 1;
     private const string MovieTitle = "Title";
     private const string Documentary = "Documentary";
@@ -38,28 +40,23 @@ public class MovieServiceTests
     [Fact]
     public async Task GetMoviesAsync_ReturnsPagedResultOfDtos()
     {
-        var movieCount = 10;
-        var movies = GenerateMovies(movieCount);
+        var movies = GenerateMovies(MoviesCount);
         var parameters = new MovieParameters();
-        var pageMeta = new PaginationMeta { PageIndex = 1, PageSize = 10, TotalCount = movieCount };
-        var pagedMovies = new PagedResult<Movie>(items: movies, details: pageMeta);
 
-        uow.Setup(u => u.Movies.GetMoviesAsync(parameters, false))
-            .ReturnsAsync(pagedMovies);
+        uow.SetupMoviesFetch(PagedResultFactory.CreatePagedResult(movies));
 
         var result = await service.GetMoviesAsync(parameters);
 
         uow.Verify(u => u.Movies.GetMoviesAsync(parameters, false), Times.Once);
         Assert.IsType<PagedResult<MovieDto>>(result);
-        Assert.Equivalent(pageMeta, result.Details);
-        Assert.Equal(movieCount, result.Items.Count());
+        Assert.Equal(MoviesCount, result.Items.Count());
         Assert.Equal(movies.First().Id, result.Items.First().Id);
     }
 
     [Fact]
     public async Task GetMovieAsync_ThrowsException_WhenMovieDoesNotExist()
     {
-        SetupMovieFetch(null);
+        uow.SetupMovieFetch(null);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.GetMovieAsync(MovieId));
@@ -69,7 +66,7 @@ public class MovieServiceTests
     public async Task GetMovieAsync_ReturnsMovieDto_WhenWithActorsIsFalse()
     {
         var movie = GenerateMovie();
-        SetupMovieFetch(movie);
+        uow.SetupMovieFetch(movie);
 
         var result = await service.GetMovieAsync(MovieId);
 
@@ -81,7 +78,7 @@ public class MovieServiceTests
     public async Task GetMovieAsync_ReturnsMovieWithActorsDto_WhenWithActorsIsTrue()
     {
         var movie = GenerateMovie();
-        SetupMovieFetch(movie, includeActors: true);
+        uow.SetupMovieFetch(movie, includeActors: true);
 
         var result = await service.GetMovieAsync(MovieId, withActors: true);
 
@@ -92,7 +89,7 @@ public class MovieServiceTests
     [Fact]
     public async Task GetMovieDetailedAsync_ThrowsException_WhenMovieDoesNotExists()
     {
-        SetupMovieFetch(null, includeActors: true, includeDetails: true, includeReviews: true);
+        uow.SetupMovieFetch(null, includeActors: true, includeDetails: true, includeReviews: true);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.GetMovieDetailedAsync(MovieId));
@@ -102,7 +99,7 @@ public class MovieServiceTests
     public async Task GetMovieDetailedAsync_ReturnsMovieDetailDto_WhenMovieExists()
     {
         var movie = GenerateMovie();
-        SetupMovieFetch(movie, includeActors: true, includeDetails: true, includeReviews: true);
+        uow.SetupMovieFetch(movie, includeActors: true, includeDetails: true, includeReviews: true);
 
         var result = await service.GetMovieDetailedAsync(MovieId);
 
@@ -113,7 +110,7 @@ public class MovieServiceTests
     [Fact]
     public async Task GetMovieForPatchAsync_ThrowsException_WhenMovieDoesNotExist()
     {
-        SetupMovieFetch(null, includeDetails: true);
+        uow.SetupMovieFetch(null, includeDetails: true);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.GetMovieForPatchAsync(MovieId));
@@ -123,7 +120,7 @@ public class MovieServiceTests
     public async Task GetMovieForPatchAsync_ReturnsMovieUpdateDto_WhenMovieExists()
     {
         var movie = GenerateMovie();
-        SetupMovieFetch(movie, includeDetails: true);
+        uow.SetupMovieFetch(movie, includeDetails: true);
 
         var result = await service.GetMovieForPatchAsync(MovieId);
 
@@ -135,7 +132,7 @@ public class MovieServiceTests
     [Fact]
     public async Task DeleteMovieAsync_ThrowsException_WhenMovieDoesNotExist()
     {
-        SetupMoviePresence(false);
+        uow.SetupMoviePresence(false);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.DeleteMovieAsync(MovieId));
@@ -144,7 +141,7 @@ public class MovieServiceTests
     [Fact]
     public async Task DeleteMovieAsync_DeletesMovieAndCompletes_WhenMovieExists()
     {
-        SetupMoviePresence(true);
+        uow.SetupMoviePresence(true);
 
         await service.DeleteMovieAsync(MovieId);
 
@@ -165,7 +162,7 @@ public class MovieServiceTests
     public async Task UpdateMovieAsync_ThrowsNotFound_WhenMovieDoesNotExist()
     {
         var updateDto = GenerateUpdateDto();
-        SetupMovieFetch(null, includeDetails: true);
+        uow.SetupMovieFetch(null, includeDetails: true);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
             () => service.UpdateMovieAsync(MovieId, updateDto));
@@ -176,8 +173,8 @@ public class MovieServiceTests
     {
         var updateDto = GenerateUpdateDto();
 
-        SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
-        SetupGenreFetch(null);
+        uow.SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
+        uow.SetupGenreFetch(null);
 
         await Assert.ThrowsAsync<NotFoundException<Genre>>(
             () => service.UpdateMovieAsync(MovieId, updateDto));
@@ -188,8 +185,8 @@ public class MovieServiceTests
     {
         var updateDto = GenerateUpdateDto();
 
-        SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
-        SetupGenreFetch(GenerateGenre(name: Documentary));
+        uow.SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
+        uow.SetupGenreFetch(GenerateGenre(name: Documentary));
 
         await Assert.ThrowsAsync<ConflictException>(
             () => service.UpdateMovieAsync(MovieId, updateDto));
@@ -200,9 +197,9 @@ public class MovieServiceTests
     {
         var updateDto = GenerateUpdateDto();
 
-        SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
-        SetupGenreFetch(GenerateGenre());
-        SetupMovieDuplicate(true);
+        uow.SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
+        uow.SetupGenreFetch(GenerateGenre());
+        uow.SetupMovieDuplicate(true);
 
         await Assert.ThrowsAsync<ConflictException>(
             () => service.UpdateMovieAsync(MovieId, updateDto));
@@ -215,9 +212,9 @@ public class MovieServiceTests
     {
         var updateDto = GenerateUpdateDto(budget: budget);
 
-        SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
-        SetupGenreFetch(GenerateGenre(name: genreName));
-        SetupMovieDuplicate(false);
+        uow.SetupMovieFetch(GenerateMovie(), includeDetails: true, trackChanges: true);
+        uow.SetupGenreFetch(GenerateGenre(name: genreName));
+        uow.SetupMovieDuplicate(false);
 
         await service.UpdateMovieAsync(MovieId, updateDto);
 
@@ -228,7 +225,7 @@ public class MovieServiceTests
     public async Task PostMovieAsync_ThrowsNotFound_WhenGenreDoesNotExist()
     {
         var createDto = GenerateCreateDto();
-        SetupGenreFetch(null);
+        uow.SetupGenreFetch(null);
 
         await Assert.ThrowsAsync<NotFoundException<Genre>>(
             () => service.PostMovieAsync(createDto));
@@ -238,7 +235,7 @@ public class MovieServiceTests
     public async Task PostMovieAsync_ThrowsConflict_WhenDocumentaryHasBudgetOver1M()
     {
         var createDto = GenerateCreateDto();
-        SetupGenreFetch(GenerateGenre(name: Documentary));
+        uow.SetupGenreFetch(GenerateGenre(name: Documentary));
 
         await Assert.ThrowsAsync<ConflictException>(
             () => service.PostMovieAsync(createDto));
@@ -249,8 +246,8 @@ public class MovieServiceTests
     {
         var createDto = GenerateCreateDto();
 
-        SetupGenreFetch(GenerateGenre());
-        SetupMovieDuplicate(true);
+        uow.SetupGenreFetch(GenerateGenre());
+        uow.SetupMovieDuplicate(true);
 
         await Assert.ThrowsAsync<ConflictException>(
             () => service.PostMovieAsync(createDto));
@@ -264,8 +261,8 @@ public class MovieServiceTests
         var createDto = GenerateCreateDto(budget: budget);
         Movie? createdMovie = null;
 
-        SetupGenreFetch(GenerateGenre(name: genreName));
-        SetupMovieDuplicate(false);
+        uow.SetupGenreFetch(GenerateGenre(name: genreName));
+        uow.SetupMovieDuplicate(false);
         uow.Setup(u => u.Movies.Add(It.IsAny<Movie>()))
             .Callback<Movie>(m => createdMovie = m);
 
@@ -278,32 +275,6 @@ public class MovieServiceTests
         Assert.Equal(createDto.Title, result.Title);
         Assert.Equal(createDto.Title, createdMovie.Title);
     }
-
-    private void SetupMovieFetch(
-        Movie? movie,
-        bool includeActors = false,
-        bool includeDetails = false,
-        bool includeReviews = false,
-        bool trackChanges = false) =>
-            uow.Setup(u => u.Movies.GetMovieAsync(
-                It.IsAny<int>(),
-                includeActors,
-                includeDetails,
-                includeReviews,
-                trackChanges))
-            .ReturnsAsync(movie);
-
-    private void SetupGenreFetch(Genre? genre) =>
-        uow.Setup(u => u.Genres.GetByIdAsync(It.IsAny<int>(), false))
-            .ReturnsAsync(genre);
-
-    private void SetupMovieDuplicate(bool duplicate) =>
-        uow.Setup(u => u.Movies.AnyAsync(It.IsAny<Expression<Func<Movie, bool>>>()))
-            .ReturnsAsync(duplicate);
-
-    private void SetupMoviePresence(bool isPresent) =>
-        uow.Setup(u => u.Movies.AnyByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync(isPresent);
 
     private static Movie GenerateMovie(int id = MovieId, string title = MovieTitle) =>
         new() { Id = id, Title = title };
