@@ -7,7 +7,6 @@ namespace MovieApp.Core.Contracts;
 public interface IActorRepository : IBaseRepositoryWithId<Actor>
 {
     public Task<PagedResult<Actor>> GetActorsAsync(
-        PageParameters parameters,
-        string? name,
+        ActorParameters parameters,
         bool trackChanges = false);
 }

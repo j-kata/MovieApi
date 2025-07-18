@@ -21,16 +21,14 @@ public class ActorsController(IServiceManager serviceManager) : ControllerBase
     /// <summary>
     /// Retrieve all actors, optionally filtered by name.
     /// </summary>
-    /// <param name="name">Name of the actor</param>
-    /// <param name="parameters">Pagination parameters.</param>
+    /// <param name="parameters">Pagination and filter parameters.</param>
     /// <returns>List of matching actors</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
-        [FromQuery] string? name,
-        [FromQuery] PageParameters parameters)
+        [FromQuery] ActorParameters parameters)
     {
-        var result = await actorService.GetActorsAsync(parameters, name);
+        var result = await actorService.GetActorsAsync(parameters);
 
         this.IncludePaginationMeta(result.Details);
         return Ok(result.Items);

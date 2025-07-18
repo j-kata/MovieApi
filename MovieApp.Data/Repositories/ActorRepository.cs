@@ -11,13 +11,12 @@ public class ActorRepository(MovieContext context)
     : BaseRepositoryWithId<Actor>(context), IActorRepository
 {
     public async Task<PagedResult<Actor>> GetActorsAsync(
-        PageParameters parameters,
-        string? name,
+        ActorParameters parameters,
         bool trackChanges = false)
     {
-        var query = name is null
+        var query = parameters.Name is null
             ? FindAll(trackChanges: trackChanges)
-            : FindBy(a => EF.Functions.Like(a.Name, $"%{name}%"), trackChanges);
+            : FindBy(a => EF.Functions.Like(a.Name, $"%{parameters.Name}%"), trackChanges);
 
         return await query.ToPagedResultAsync(parameters.PageSize, parameters.PageIndex);
     }

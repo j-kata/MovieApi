@@ -62,7 +62,7 @@ public class MovieServiceTests
         SetupMovieFetch(null);
 
         await Assert.ThrowsAsync<NotFoundException<Movie>>(
-            () => service.GetMovieAsync(1));
+            () => service.GetMovieAsync(MovieId));
     }
 
     [Fact]

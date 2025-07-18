@@ -12,9 +12,9 @@ namespace MovieApp.Services;
 
 public class ActorService(IUnitOfWork uow, IMapper mapper) : IActorService
 {
-    public async Task<PagedResult<ActorDto>> GetActorsAsync(PageParameters parameters, string? name)
+    public async Task<PagedResult<ActorDto>> GetActorsAsync(ActorParameters parameters)
     {
-        var result = await uow.Actors.GetActorsAsync(parameters, name);
+        var result = await uow.Actors.GetActorsAsync(parameters);
         return result.Map<Actor, ActorDto>(mapper);
     }
 
